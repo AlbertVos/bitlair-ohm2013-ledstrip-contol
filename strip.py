@@ -62,7 +62,7 @@ def toTuppleArray(s):
 class Artnet:
   localHost = "0.0.0.0";
   localPort = 6454;
-  addr = [("192.168.89.255", 6454)];
+  addr = [("192.168.1.255", 6454)];
   sock = 0;
 
   #                       01234567   8   9   a   b   c   d   e   f   10  11  

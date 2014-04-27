@@ -3,12 +3,14 @@
 import time;
 import threading;
 from strip import *;
+from simstrip import *;
 
 from police import *;
 from rainbow import *;
 from bump import *;
 from cmorph import *;
 from lemmings import *;
+from plasma import *;
 
 
 lenx = 7;
@@ -33,6 +35,7 @@ colors = [
 ];
 
 
+start(7000, 5);
 
 #strip2D = Strip2D(lenx, leny);
 #police = Police3(strip2D);

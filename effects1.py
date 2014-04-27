@@ -9,6 +9,7 @@ from rainbow import *;
 from bump import *;
 from cmorph import *;
 from lemmings import *;
+from plasma import *;
 
 
 lenx = 7;
@@ -20,6 +21,9 @@ ip = [
   "192.168.89.135", 
   "192.168.89.132", 
   "192.168.89.134", 
+];
+ip = [
+  "192.168.1.255", 
 ];
 addr = [("192.168.89.255", 6454), ("localhost", 7000)]
 
@@ -36,6 +40,7 @@ effects = [
   Police3(strip2D),
   Lemmings1(strip2D),
   CMorph(strip2D),
+  Plasma(strip2D),
 ];
 
 count = 0;

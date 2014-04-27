@@ -7,16 +7,16 @@ Start 2 window listening at port 7000 and 7001
   ./simstrip.py 2 port=7000
 """
 
-import socket
-import time
-import signal
-import sys
-import select
-import threading
+import math
 import os
 import random
-import math
+import select
+import signal
+import socket
 import subprocess
+import sys
+import threading
+import time
 
 import pygame
 
@@ -46,7 +46,7 @@ class SimStrip:
     self.sock.bind(("0.0.0.0", self.port));
     print("SimStrip using port:", self.port);
 
-    self.screen = Screen();
+    self.screen = Screen("Strip " + str(self.port % 100 + 1));
 
   # Shutdown the connection
   def close(self):
@@ -85,7 +85,7 @@ class SimStrip:
 
 
 class Screen:
-  def __init__(self):
+  def __init__(self, title):
 
     self.pixelswide = 7
     self.pixelshigh = 21
@@ -94,6 +94,7 @@ class Screen:
     self.screenhigh = 20 * self.pixelshigh;
 
     self.screen = pygame.display.set_mode((self.screenwide, self.screenhigh))
+    pygame.display.set_caption(title);
     self.surface = pygame.Surface((self.pixelswide, self.pixelshigh))
 
   def processEvents(self):
@@ -117,28 +118,38 @@ def run(port):
   ss.handleMessages();
 
 
-num = 1;
-isChild = False;
-
-for i in range(1, len(sys.argv)):
-  if sys.argv[i].startswith("port="):
-    portDefault = int(sys.argv[i][5:]);
-    #print "port =", portDefault
-  elif sys.argv[i] == "-":
-    isChild = True;
-  #elif sys.argv[i].startswith("num="):
-  else:
-    n = int(sys.argv[i]);
-    if n > 1 and n < 20:
-      num = n
-    #print "num =", num
-
-if isChild:
-  port = int(sys.argv[1]);
-  #print "port =", port
-  run(port);
-else:  
+def start(port, num):
   for i in range(num):
-    subprocess.Popen(["python", "simstrip.py", str(portDefault + i), "-"]);
+    pos_x = 100 + 100 * i;
+    pos_y = 100;
+    os.environ['SDL_VIDEO_WINDOW_POS'] = '%i,%i' % (pos_x,pos_y)
+    os.environ['SDL_VIDEO_CENTERED'] = '0'
+    subprocess.Popen(["python", "simstrip.py", str(port + i), "-"]);
+    time.sleep(0.3);
+
+
+if __name__ == "__main__":
+  num = 1;
+  isChild = False;
+
+  for i in range(1, len(sys.argv)):
+    if sys.argv[i].startswith("port="):
+      portDefault = int(sys.argv[i][5:]);
+      #print "port =", portDefault
+    elif sys.argv[i] == "-":
+      isChild = True;
+    #elif sys.argv[i].startswith("num="):
+    else:
+      n = int(sys.argv[i]);
+      if n > 1 and n < 20:
+        num = n
+      #print "num =", num
+
+  if isChild:
+    port = int(sys.argv[1]);
+    #print "port =", port
+    run(port);
+  else:
+    start(portDefault, num);
 
 
