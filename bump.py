@@ -35,7 +35,9 @@ class Bump1(Effect):
 
 
 """
-./bump.py 'addr=[("localhost", 7000)]'
+./bump.py addr=192.168.1.255
+./bump.py 'addr=[("192.168.1.255", ), ("localhost", 7000)]'
+./bump.py 'addr=[("192.168.1.255", 6454), ("localhost", 7000)]'
 """
 
 if __name__ == "__main__":

@@ -25,7 +25,9 @@ class Rainbow(Effect):
 
 
 """
-./rainbow.py 'addr=[("localhost", 7000)]'
+./rainbow.py addr=192.168.1.255
+./rainbow.py 'addr=[("192.168.1.255", ), ("localhost", 7000)]'
+./rainbow.py 'addr=[("192.168.1.255", 6454), ("localhost", 7000)]'
 """
 
 if __name__ == "__main__":

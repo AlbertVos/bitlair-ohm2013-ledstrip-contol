@@ -113,16 +113,18 @@ class Police3(Effect):
 
 
 """
-./police.py 'addr=[("localhost", 7000)]'
+./police.py [1|2|3] addr=192.168.1.255
+./police.py [1|2|3] 'addr=[("192.168.1.255", ), ("localhost", 7000)]'
+./police.py [1|2|3] 'addr=[("192.168.1.255", 6454), ("localhost", 7000)]'
 """
 
 if __name__ == "__main__":
-  if int(sys.argv[1]) == 1:
-    e = Police1(Strip2D(7, 21));
-  if int(sys.argv[1]) == 2:
+  if (len(sys.argv) >= 2 and sys.argv[1] == "2"):
     e = Police2(Strip2D(7, 21));
-  if int(sys.argv[1]) == 3:
+  elif (len(sys.argv) >= 2 and sys.argv[1] == "3"):
     e = Police3(Strip2D(7, 21));
+  else:
+    e = Police1(Strip2D(7, 21));
   e.run();
 
 

@@ -3,21 +3,32 @@
 import time
 from strip import *;
 
+select = 1
+
 class CMorph(Effect):
+    
   color1 = [255, 15, 0];
+  color2 = [40, 34, 15];
   #color2 = [200, 200, 200];
   #color2 = [15, 0, 255];
   #color2 = [15, 255, 0];
   #color2 = [0, 255, 255];
   #color2 = [30, 9, 0];
-  color2 = [40, 34, 15];
-
-  dr = float(color2[0] - color1[0]);
-  dg = float(color2[1] - color1[1]);
-  db = float(color2[2] - color1[2]);
 
   def __init__(self, strip2D):
     super(CMorph, self).__init__(strip2D);
+    
+    if select == 2:
+      self.color1 = [255, 255, 255];
+      self.color2 = [0, 0, 0];
+    elif select == 3:
+      self.color1 = [255, 15, 0];
+      self.color2 = [0, 15, 255];
+    
+    self.dr = float(self.color2[0] - self.color1[0]);
+    self.dg = float(self.color2[1] - self.color1[1]);
+    self.db = float(self.color2[2] - self.color1[2]);
+
 
   def color(self, count):
     [r, g, b] = self.color1;
@@ -71,5 +82,18 @@ class CMorph(Effect):
         count2 = count2 % 100;
 
     self.quit = False;
+
+
+"""
+./cmorph.py addr=192.168.1.255
+./cmorph.py 'addr=[("192.168.1.255", ), ("localhost", 7000)]'
+./cmorph.py 'addr=[("192.168.1.255", 6454), ("localhost", 7000)]'
+"""
+
+if __name__ == "__main__":
+  if len(sys.argv) >= 2:
+    select = int(sys.argv[1])
+  e = CMorph(Strip2D(7, 21));
+  e.run();
 
 
