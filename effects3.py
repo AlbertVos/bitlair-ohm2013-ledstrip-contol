@@ -2,8 +2,8 @@
 
 import time;
 import threading;
+
 from strip import *;
-from simstrip import *;
 
 from police import *;
 from rainbow import *;
@@ -22,6 +22,7 @@ addr = [
   [("192.168.89.135", 6454), ("localhost", 7002)],
   [("192.168.89.132", 6454), ("localhost", 7003)],
   [("192.168.89.134", 6454), ("localhost", 7004)],
+  [("192.168.89.149", 6454), ("localhost", 7005)],
 ];
 
 colors = [
@@ -34,8 +35,6 @@ colors = [
   [255, 0, 255],
 ];
 
-
-start(7000, 5);
 
 #strip2D = Strip2D(lenx, leny);
 #police = Police3(strip2D);
@@ -83,6 +82,12 @@ while True:
       c = colors[(colorCount + 9) % len(colors)];
       fillThird(s, 0, c);
     elif i == 4:
+      c = colors[(colorCount + 5) % len(colors)];
+      fillThird(s, 2, c);
+      fillThird(s, 1, [0, 0, 0]);
+      c = colors[(colorCount + 9) % len(colors)];
+      fillThird(s, 0, c);
+    elif i == 5:
       c = colors[(colorCount + 6) % len(colors)];
       fillThird(s, 2, c);
       c = colors[(colorCount + 7) % len(colors)];
@@ -99,6 +104,7 @@ while True:
   colorCount += 1;
   time.sleep(0.1);
 
+ipcnt = 0;
 while True:
   strip2D.strip.artnet.addr = addr[ipcnt];
   ipcnt = (ipcnt + 1) % len(addr);
