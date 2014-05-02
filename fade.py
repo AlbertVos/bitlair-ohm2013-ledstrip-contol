@@ -29,6 +29,8 @@ class Fade1(Effect):
       count += 1;
       count = count % self.strip2D.lenx;
 
+    self.quit = False;
+
   def color(self, count):
     if (count < 256):
       count -= 0;
@@ -72,6 +74,7 @@ class Fade2(Effect):
       count += 1;
       count = count % self.strip2D.lenx;
 
+    self.quit = False;
 
 
 """
