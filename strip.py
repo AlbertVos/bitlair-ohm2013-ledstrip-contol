@@ -364,14 +364,32 @@ class Canvas:
 
 class Effect(object):
   quit = False;
+  count = 0;
 
   def __init__(self, strip2D):
     self.strip2D = strip2D;
 
-  def run():
+  """
+    You can either override the run method or the stepEffect method.
+    If you override the run method you have to do everything yourself.
+    The stepEffect method is called repeatedly with a sleep of .02 
+    in between; the send method is called automatically.
+  """
+  def run(self, runtime = sys.maxint):
+
+    self.strip2D.strip.clear([0, 0, 0]);
+    self.strip2D.send();
+
+    self.quit = False;
+    now = time.time();
+    while (not self.quit) and ((time.time() - now) < runtime):
+      self.stepEffect(self.count); 
+      self.count += 1;
+      self.strip2D.send();
+      time.sleep(0.02);
+
+  def stepEffect(self, count):
     raise Exception("run method not implemented!!");
-
-
 
 
 """

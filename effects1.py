@@ -4,12 +4,15 @@ import time;
 import threading;
 from strip import *;
 
-from police import *;
-from rainbow import *;
 from bump import *;
 from cmorph import *;
+from fade import *;
+from fire import *;
 from lemmings import *;
 from plasma import *;
+from police import *;
+from rainbow import *;
+from stars import *;
 
 
 lenx = 7;
@@ -41,6 +44,10 @@ effects = [
   Lemmings1(strip2D),
   CMorph(strip2D),
   Plasma(strip2D),
+  Fire(strip2D),
+  Fade1(strip2D),
+  Fade2(strip2D),
+  Stars(strip2D),
 ];
 
 count = 0;
@@ -71,6 +78,10 @@ while True:
   ipcnt = (ipcnt + 1) % len(ip);
   strip2D.strip.artnet.addr = addr;
   effects[count].run(20);
+  for i in range(10):
+    strip2D.strip.fade(.6);
+    strip2D.send();
+    time.sleep(0.05);
   strip2D.strip.artnet.clear();
   dowait = False;
   while dowait == False:

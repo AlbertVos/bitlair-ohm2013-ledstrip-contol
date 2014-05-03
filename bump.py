@@ -4,6 +4,7 @@ import time;
 import random;
 from strip import *;
 
+
 class Bump1(Effect):
 
   def __init__(self, strip2D):
@@ -34,15 +35,8 @@ class Bump1(Effect):
     self.quit = False;
 
 
-"""
-./bump.py addr=192.168.1.255
-./bump.py 'addr=[("192.168.1.255", ), ("localhost", 7000)]'
-./bump.py 'addr=[("192.168.1.255", 6454), ("localhost", 7000)]'
-"""
-
 if __name__ == "__main__":
   e = Bump1(Strip2D(7, 21));
   e.run();
-
 
 
