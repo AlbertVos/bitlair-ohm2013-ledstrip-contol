@@ -8,6 +8,7 @@ from bump import *;
 from cmorph import *;
 from fade import *;
 from fire import *;
+from hourglass import *;
 from lemmings import *;
 from plasma import *;
 from police import *;
@@ -38,12 +39,13 @@ effects = [
   [Police3(strip2D), 3],
   [Lemmings1(strip2D), 10],
   [CMorph(strip2D), 7],
-  [Plasma(strip2D), 20],
+  [Plasma(strip2D), 30],
   [Fire(strip2D), 20],
   [Fade1(strip2D), 3],
   [Fade2(strip2D), 3],
-  [Stars1(strip2D), 5],
-  [Stars2(strip2D), 5],
+  [Stars1(strip2D), 15],
+  #[Stars2(strip2D), 5],
+  [Hourglass(strip2D), 30],
 ];
 
 count = 0;
