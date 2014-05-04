@@ -28,32 +28,36 @@ ip = [
 ip = [
   "192.168.1.255", 
 ];
-addr = [("192.168.89.255", 6454), ("localhost", 7000)]
-
-#strip2D = Strip2D(lenx, leny);
-#police = Police3(strip2D);
-#police.run();
 
 strip2D = Strip2D(lenx, leny);
 effects = [
-  Police1(strip2D), 
-  Rainbow(strip2D),
-  Police2(strip2D), 
-  Bump1(strip2D),
-  Police3(strip2D),
-  Lemmings1(strip2D),
-  CMorph(strip2D),
-  Plasma(strip2D),
-  Fire(strip2D),
-  Fade1(strip2D),
-  Fade2(strip2D),
-  Stars(strip2D),
+  [Police1(strip2D), 3],
+  [Rainbow(strip2D), 10],
+  [Police2(strip2D),  3],
+  [Bump1(strip2D), 3],
+  [Police3(strip2D), 3],
+  [Lemmings1(strip2D), 10],
+  [CMorph(strip2D), 7],
+  [Plasma(strip2D), 20],
+  [Fire(strip2D), 20],
+  [Fade1(strip2D), 3],
+  [Fade2(strip2D), 3],
+  [Stars1(strip2D), 5],
+  [Stars2(strip2D), 5],
 ];
 
 count = 0;
 ipcnt = 0;
 dowait = False;
 
+while True:
+  strip2D.strip.artnet.host = ip[ipcnt];
+  ipcnt = (ipcnt + 1) % len(ip);
+  effects[count][0].run(effects[count][1]);
+  strip2D.strip.artnet.clear();
+  count = (count + 1) % len(effects);
+  
+"""
 def manage():
   global count
   global dowait;
@@ -62,7 +66,7 @@ def manage():
     dowait = True;
     cnt = count;
     count = (count + 1) % len(effects);
-    effects[cnt].quit = True;
+    effects[cnt][0].quit = True;
     while dowait == True:
       time.sleep(0.1);
     dowait = True;
@@ -72,12 +76,14 @@ thread = threading.Thread(target = manage, args = []);
 thread.daemon = True;
 thread.start();
 
-while True:
+addr = [("192.168.89.255", 6454), ("localhost", 7000)]
+
+while False:
   addr[0] = (ip[ipcnt], addr[0][1]);
   addr[1] = (addr[1][0], 7000 + ipcnt);
   ipcnt = (ipcnt + 1) % len(ip);
   strip2D.strip.artnet.addr = addr;
-  effects[count].run(20);
+  effects[count][0].run(effects[count][1] * 10);
   for i in range(10):
     strip2D.strip.fade(.6);
     strip2D.send();
@@ -103,5 +109,5 @@ os.kill(os.getpid(), signal.SIGKILL);
 #thread.daemon = True;
 #thread.start();
 #thread.join();
-
+"""
 

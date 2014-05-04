@@ -8,7 +8,7 @@ from strip import *;
 class Stars1(Effect):
 
   def __init__(self, strip2D):
-    super(Stars, self).__init__(strip2D);
+    super(Stars1, self).__init__(strip2D);
     self.getColor = self.getColor1
 
   def stepEffect(self, count):
