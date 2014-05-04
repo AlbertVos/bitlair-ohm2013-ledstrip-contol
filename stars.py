@@ -11,7 +11,7 @@ class Stars1(Effect):
     super(Stars1, self).__init__(strip2D);
     self.getColor = self.getColor1
 
-  def stepEffect(self, count):
+  def step(self, count):
     if (count % 5) != 0:
       return;
     self.strip2D.strip.fade(.8);
@@ -38,7 +38,7 @@ class Stars2(Effect):
       , random.randint(-1, 1), random.randint(-2, 2), self.getColor(), 0] \
       for each in range(self.numstar)];
 
-  def stepEffect(self, count):
+  def step(self, count):
     if (count % 9) != 0:
       return;
     self.strip2D.strip.fade(.5);

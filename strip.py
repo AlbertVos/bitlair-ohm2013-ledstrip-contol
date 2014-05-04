@@ -370,10 +370,10 @@ class Effect(object):
     self.strip2D = strip2D;
 
   """
-    You can either override the run method or the stepEffect method.
+    You can either override the run method or the step method.
     If you override the run method you have to do everything yourself.
-    The stepEffect method is called repeatedly with a sleep of .02 
-    in between; the send method is called automatically.
+    The step method is called repeatedly with a sleep of .02 
+    in between; the strip send method is called automatically.
   """
   def run(self, runtime = sys.maxint):
 
@@ -382,13 +382,20 @@ class Effect(object):
 
     self.quit = False;
     now = time.time();
+    self.init();
     while (not self.quit) and ((time.time() - now) < runtime):
-      self.stepEffect(self.count); 
+      self.step(self.count); 
       self.count += 1;
       self.strip2D.send();
       time.sleep(0.02);
 
-  def stepEffect(self, count):
+  """ 
+    init is called be a new sequence of steps is executed to reinitialize.
+  """
+  def init(self):
+    return;
+
+  def step(self, count):
     raise Exception("run method not implemented!!");
 
 

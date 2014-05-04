@@ -8,7 +8,7 @@ class Power(Effect):
   def __init__(self, strip2D):
     super(Power, self).__init__(strip2D);
 
-  def stepEffect(self, count):
+  def step(self, count):
     #if (count % 5) != 0:
     #  return;
     v = int(74.0 + 70.0 * math.sin(count / 20.0));
