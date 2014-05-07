@@ -138,14 +138,15 @@ class Artnet:
     for i in range(len(self.addr)):
       self.sock.sendto(self.dataHeader + data, self.addr[i])
 
-  # Run poll for 10 seconds.
+  # Run poll for 5 seconds.
   def poll(self):
+    devices = []
     self.sock.setblocking(0)
     for i in range(len(self.addr)):
       self.sock.sendto(self.pollMsg, self.addr[i])
     print "=== Sent artnet poll ==="
     now = time.time();
-    while (time.time() - now) < 10:
+    while (time.time() - now) < 5:
       ready = select.select([self.sock], [], [], 0.5)
       if ready[0]:
         rdata, raddr = self.sock.recvfrom(5000)
@@ -154,7 +155,9 @@ class Artnet:
           # officially this needs to be answered with a reply
         if ord(rdata[8]) == 0x00 and ord(rdata[9]) == 0x21:
           print "received poll reply from", raddr[0], "@", raddr[1];
+          devices.append(raddr);
     self.sock.setblocking(1)
+    return devices;
 
 #
 # The Strip class defines operations for a 1-dimensional string of leds.

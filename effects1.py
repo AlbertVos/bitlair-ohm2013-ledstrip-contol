@@ -20,15 +20,17 @@ lenx = 7;
 leny = 21;
 
 ip = [
+  "192.168.89.150", 
   "192.168.89.133", 
   "192.168.89.131", 
   "192.168.89.135", 
   "192.168.89.132", 
   "192.168.89.134", 
+  "192.168.89.149", 
 ];
-ip = [
-  "192.168.1.255", 
-];
+#ip = [
+#  "192.168.1.255", 
+#];
 
 strip2D = Strip2D(lenx, leny);
 effects = [
@@ -44,7 +46,7 @@ effects = [
   [Fade1(strip2D), 3],
   [Fade2(strip2D), 3],
   [Stars1(strip2D), 15],
-  #[Stars2(strip2D), 5],
+  [Stars2(strip2D), 10],
   [Hourglass(strip2D), 30],
 ];
 
@@ -52,14 +54,16 @@ count = 0;
 ipcnt = 0;
 dowait = False;
 
-while True:
-  strip2D.strip.artnet.host = ip[ipcnt];
-  ipcnt = (ipcnt + 1) % len(ip);
-  effects[count][0].run(effects[count][1]);
-  strip2D.strip.artnet.clear();
-  count = (count + 1) % len(effects);
-  
-"""
+if False:
+  while True:
+    strip2D.strip.artnet.host = ip[ipcnt];
+    ipcnt = (ipcnt + 1) % len(ip);
+    effects[count][0].run(effects[count][1]);
+    strip2D.strip.artnet.clear();
+    count = (count + 1) % len(effects);
+
+
+
 def manage():
   global count
   global dowait;
@@ -80,7 +84,7 @@ thread.start();
 
 addr = [("192.168.89.255", 6454), ("localhost", 7000)]
 
-while False:
+while True:
   addr[0] = (ip[ipcnt], addr[0][1]);
   addr[1] = (addr[1][0], 7000 + ipcnt);
   ipcnt = (ipcnt + 1) % len(ip);
@@ -96,7 +100,7 @@ while False:
     time.sleep(0.1);
 
 while False:
-  strip2D.strip.artnet.host = ip[ipcnt];
+  strip2D.strip.artnet.addr = [(ip[ipcnt], 6454)];
   ipcnt = (ipcnt + 1) % len(ip);
   effects[count].run();
   strip2D.strip.artnet.clear();
@@ -111,5 +115,4 @@ os.kill(os.getpid(), signal.SIGKILL);
 #thread.daemon = True;
 #thread.start();
 #thread.join();
-"""
 
