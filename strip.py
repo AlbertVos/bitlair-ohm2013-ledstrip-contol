@@ -134,7 +134,6 @@ class Artnet:
       c = strip.get(i);
       #print "send ", i, str(c[0]), str(c[1]), str(c[2]);
       data += chr(c[0]) + chr(c[1]) + chr(c[2]);
-    #time.sleep(0.02)
     for i in range(len(self.addr)):
       self.sock.sendto(self.dataHeader + data, self.addr[i])
 
@@ -180,6 +179,8 @@ class Strip:
 
   # Stop this strip
   def stop(self):
+    if "globalStop" in dir(strip):
+      self.globalStop(self);
     self.artnet.close();
 
   # Send the data of myself to the strip

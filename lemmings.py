@@ -109,6 +109,7 @@ class Lemmings1(Effect):
 
   def __init__(self, strip2D):
     super(Lemmings1, self).__init__(strip2D);
+    self.strip2D.strip.clear();
 
   def run(self, runtime = sys.maxint):
     start = 10;

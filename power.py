@@ -7,6 +7,7 @@ class Power(Effect):
 
   def __init__(self, strip2D):
     super(Power, self).__init__(strip2D);
+    self.strip2D.strip.clear();
 
   def step(self, count):
     #if (count % 5) != 0:

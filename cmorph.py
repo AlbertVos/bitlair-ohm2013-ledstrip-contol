@@ -17,6 +17,7 @@ class CMorph(Effect):
 
   def __init__(self, strip2D):
     super(CMorph, self).__init__(strip2D);
+    self.strip2D.strip.clear();
     
     if select == 2:
       self.color1 = [255, 255, 255];
@@ -77,7 +78,7 @@ class CMorph(Effect):
         c = self.color(count2);
         self.strip2D.strip.clear(c);
         self.strip2D.send();
-        time.sleep(0.03);
+        time.sleep(0.05);
         count2 += 3;
         count2 = count2 % 100;
 

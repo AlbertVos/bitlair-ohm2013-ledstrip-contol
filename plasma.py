@@ -16,6 +16,7 @@ class Plasma(Effect):
 
   def __init__(self, strip2D):
     super(Plasma, self).__init__(strip2D);
+    self.strip2D.strip.clear();
     self.color = self.color1;
     self.num_col = self.num_col1;
   

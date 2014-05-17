@@ -12,9 +12,14 @@ class Hourglass(Effect):
   numpart = 125;
   numlayer = 5;
   initcnt = -1;
+  gold = [255, 215, 0];
+  white = [255, 255, 255];
+  blue = [50, 50, 255];
+  colors = [blue, gold];
 
   def __init__(self, strip2D):
     super(Hourglass, self).__init__(strip2D);
+    self.strip2D.strip.clear();
 
   def init(self):
     for i in range(0, self.numlayer):
@@ -25,8 +30,7 @@ class Hourglass(Effect):
     self.initcnt = -1;
 
   def step(self, count):
-
-    self.strip2D.strip.clear();
+    self.strip2D.strip.clear(self.colors[0]);
 
     if self.initcnt == 0:
       self.init();
@@ -36,7 +40,7 @@ class Hourglass(Effect):
       self.initcnt -= 1;
       for i in range(self.numlayer):
         for j in range(7):
-          self.strip2D.set(j, 20 - (self.initcnt / 3 + i), [255, 215, 0]);
+          self.strip2D.set(j, 20 - (self.initcnt / 3 + i), self.colors[1]);
       return;
 
     # check for end
@@ -57,13 +61,16 @@ class Hourglass(Effect):
         self.bottom.append(p);
 
     for i in range(len(self.top)):
-      self.strip2D.set(self.top[i][0], 20 - self.top[i][2], [255, 215, 0]);
+      self.strip2D.set(self.top[i][0], 20 - self.top[i][2], self.colors[1]);
 
     for i in range(len(self.bottom)):
-      self.strip2D.set(self.bottom[i][0], 20 - self.bottom[i][2], [255, 215, 0]);
+      self.strip2D.set(self.bottom[i][0], 20 - self.bottom[i][2], self.colors[1]);
 
     for i in range(len(self.active)):
-      self.strip2D.set(self.active[i][0], 20 - self.active[i][2], [255, 215, 0]);
+      self.strip2D.set(self.active[i][0], 20 - self.active[i][2], self.colors[1]);
+
+  def setColors(self, colors):
+    self.colors = colors;
 
 
 if __name__ == "__main__":

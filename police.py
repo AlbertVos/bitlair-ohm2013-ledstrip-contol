@@ -17,6 +17,7 @@ class Police1(Effect):
 
   def __init__(self, strip2D):
     super(Police1, self).__init__(strip2D);
+    self.strip2D.strip.clear();
 
   def run(self, runtime = sys.maxint):
     count = 0;
@@ -45,6 +46,7 @@ class Police2(Effect):
 
   def __init__(self, strip2D):
     super(Police2, self).__init__(strip2D);
+    self.strip2D.strip.clear();
 
   def rotr(self, y1, y2):
     for y in range(y1, y2):
@@ -79,6 +81,7 @@ class Police3(Effect):
 
   def __init__(self, strip2D):
     super(Police3, self).__init__(strip2D);
+    self.strip2D.strip.clear();
 
   def color(self, count):
     if (count < 256):

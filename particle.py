@@ -10,6 +10,7 @@ class Particle1(Effect):
 
   def __init__(self, strip2D):
     super(Particle1, self).__init__(strip2D);
+    self.strip2D.strip.clear();
     self.strip = self.strip2D;
     self.particles1 = [[[0, 0] for y in range(self.strip.leny)] \
       for x in range(self.strip.lenx)];

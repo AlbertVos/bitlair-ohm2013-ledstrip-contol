@@ -28,9 +28,9 @@ ip = [
   "192.168.89.134", 
   "192.168.89.149", 
 ];
-#ip = [
-#  "192.168.1.255", 
-#];
+ip = [
+  "192.168.89.255", 
+];
 
 strip2D = Strip2D(lenx, leny);
 effects = [
@@ -42,13 +42,25 @@ effects = [
   [Lemmings1(strip2D), 10],
   [CMorph(strip2D), 7],
   [Plasma(strip2D), 30],
-  [Fire(strip2D), 20],
+  [Fire(strip2D), 30],
   [Fade1(strip2D), 3],
   [Fade2(strip2D), 3],
   [Stars1(strip2D), 15],
   [Stars2(strip2D), 10],
   [Hourglass(strip2D), 30],
 ];
+
+
+def globalStop(self):
+  print "globalStop"
+  for i in range(len(ip)):
+    addr[0] = (ip[i], addr[0][1]);
+    addr[1] = (addr[1][0], 7000 + i);
+    self.artnet.addr = addr;
+    self.artnet.clear();
+    self.send();
+
+strip2D.strip.globalStop = globalStop
 
 count = 0;
 ipcnt = 0;
@@ -68,7 +80,7 @@ def manage():
   global count
   global dowait;
   while True:
-    time.sleep(4);
+    time.sleep(effects[count][1]);
     dowait = True;
     cnt = count;
     count = (count + 1) % len(effects);

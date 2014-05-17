@@ -8,6 +8,7 @@ class Fade1(Effect):
 
   def __init__(self, strip2D):
     super(Fade1, self).__init__(strip2D);
+    self.strip2D.strip.clear();
 
   def run(self, runtime = sys.maxint):
       
@@ -56,6 +57,7 @@ class Fade2(Effect):
 
   def __init__(self, strip2D):
     super(Fade2, self).__init__(strip2D);
+    self.strip2D.strip.clear();
 
   def run(self, runtime = sys.maxint):
       
