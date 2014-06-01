@@ -14,6 +14,8 @@ from plasma import *;
 from police import *;
 from rainbow import *;
 from stars import *;
+from night import *;
+from matrix import *;
 
 
 lenx = 7;
@@ -43,11 +45,13 @@ effects = [
   [CMorph(strip2D), 7],
   [Plasma(strip2D), 30],
   [Fire(strip2D), 30],
+  [Night(strip2D), 30],
   [Fade1(strip2D), 3],
   [Fade2(strip2D), 3],
   [Stars1(strip2D), 15],
   [Stars2(strip2D), 10],
   [Hourglass(strip2D), 30],
+  [Matrix(strip2D), 20],
 ];
 
 

@@ -64,6 +64,7 @@ class Artnet:
   localPort = 6454;
   addr = [("192.168.89.255", 6454)];
   sock = 0;
+  fade = 1.0;
 
   #                       01234567   8   9   a   b   c   d   e   f   10  11  
   #                                  op-code protver seq phy universe len  
@@ -84,6 +85,12 @@ class Artnet:
         for i in range(1, len(sys.argv)):
           if sys.argv[i].startswith("addr="):
             self.addr = toTuppleArray(sys.argv[i][5:]);
+    if "FADE" in os.environ:
+      self.fade = float(os.environ.get('FADE'));
+      if self.fade > 1.0:
+        self.fade = 1.0;
+      if self.fade < 0.0:
+        self.fade = 0.0;
 
     # check for missing port and set to default
     for i in range(len(self.addr)):
@@ -133,7 +140,7 @@ class Artnet:
     for i in reversed(range(strip.length)):
       c = strip.get(i);
       #print "send ", i, str(c[0]), str(c[1]), str(c[2]);
-      data += chr(c[0]) + chr(c[1]) + chr(c[2]);
+      data += chr(int(c[0] * self.fade)) + chr(int(c[1] * self.fade)) + chr(int(c[2] * self.fade));
     for i in range(len(self.addr)):
       self.sock.sendto(self.dataHeader + data, self.addr[i])
 
@@ -194,9 +201,19 @@ class Strip:
     self.rgb = [[r, g, b] for x in range(self.length)];
 
   # Set led at index to color.
-  def set(self, index, color):
+  def set(self, index, color, alpha = -1):
     if ((index >= 0) and (index < self.length)):
       [r, g, b] = color;
+      if alpha >= 0:
+        c = self.get(index);
+        if c[0] > 0 and c[1] > 0 and c[2] > 0:
+          alpha = float(alpha) / 255.0;
+          r = int(alpha * r + (1 - alpha) * c[0]);
+          g = int(alpha * g + (1 - alpha) * c[1]);
+          b = int(alpha * b + (1 - alpha) * c[2]);
+          if r > 255: r = 255;
+          if g > 255: g = 255;
+          if b > 255: b = 255;
       self.rgb[self.length - 1 - index] = [r, g, b];
 
   # Get color of led at index.

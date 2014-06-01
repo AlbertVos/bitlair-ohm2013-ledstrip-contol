@@ -4,17 +4,21 @@ from strip import *;
 
 
 class Power(Effect):
+  auto = True;
+  v = 0;
 
-  def __init__(self, strip2D):
+  def __init__(self, strip2D, offset = 0.0):
     super(Power, self).__init__(strip2D);
     self.strip2D.strip.clear();
+    self.offset = offset;
 
   def step(self, count):
     #if (count % 5) != 0:
     #  return;
-    v = int(74.0 + 70.0 * math.sin(count / 20.0));
+    if self.auto:
+      self.v = int(74.0 + 70.0 * math.sin((count + self.offset) / 20.0));
     self.strip2D.strip.clear();
-    for i in range(v):
+    for i in range(self.v):
       self.strip2D.strip.set(i, self.getColor(i));
 
   def getColor(self, i):

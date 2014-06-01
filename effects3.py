@@ -54,7 +54,8 @@ for i in range(len(addr)):
 
 colorCount = 0;
 while True:
-  for i in range(len(strips)):
+  n = 2 * len(addr) + 2;
+  for i in range(len(addr)):
     s = strips[i];
     if i == 0:
       c = colors[(colorCount + 0) % len(colors)];
@@ -63,42 +64,18 @@ while True:
       fillThird(s, 1, c);
       c = colors[(colorCount + 2) % len(colors)];
       fillThird(s, 2, c);
-    elif i == 1:
-      c = colors[(colorCount + 3) % len(colors)];
+    elif i == len(addr) - 1:
+      c = colors[(colorCount + i + 2) % len(colors)];
       fillThird(s, 2, c);
-      fillThird(s, 1, [0, 0, 0]);
-      c = colors[(colorCount + 11) % len(colors)];
-      fillThird(s, 0, c);
-    elif i == 2:
-      c = colors[(colorCount + 4) % len(colors)];
-      fillThird(s, 2, c);
-      fillThird(s, 1, [0, 0, 0]);
-      c = colors[(colorCount + 10) % len(colors)];
-      fillThird(s, 0, c);
-    elif i == 3:
-      c = colors[(colorCount + 5) % len(colors)];
-      fillThird(s, 2, c);
-      fillThird(s, 1, [0, 0, 0]);
-      c = colors[(colorCount + 9) % len(colors)];
-      fillThird(s, 0, c);
-    elif i == 4:
-      c = colors[(colorCount + 5) % len(colors)];
-      fillThird(s, 2, c);
-      fillThird(s, 1, [0, 0, 0]);
-      c = colors[(colorCount + 9) % len(colors)];
-      fillThird(s, 0, c);
-    elif i == 5:
-      c = colors[(colorCount + 6) % len(colors)];
-      fillThird(s, 2, c);
-      c = colors[(colorCount + 7) % len(colors)];
+      c = colors[(colorCount + i + 3) % len(colors)];
       fillThird(s, 1, c);
-      c = colors[(colorCount + 8) % len(colors)];
+      c = colors[(colorCount + i + 4) % len(colors)];
       fillThird(s, 0, c);
     else:
-      c = colors[(colorCount + 7 + i) % len(colors)];
+      c = colors[(colorCount + i + 2) % len(colors)];
       fillThird(s, 2, c);
       fillThird(s, 1, [0, 0, 0]);
-      c = colors[(colorCount + 12 - i) % len(colors)];
+      c = colors[(colorCount + n - i) % len(colors)];
       fillThird(s, 0, c);
     s.send();
   colorCount += 1;
@@ -112,7 +89,7 @@ while True:
   strip2D.strip.artnet.clear();
   dowait = False;
   while dowait == False:
-    time.sleep(0.1);
+    time.sleep(0.15);
 
 while False:
   strip2D.strip.artnet.host = ip[ipcnt];
