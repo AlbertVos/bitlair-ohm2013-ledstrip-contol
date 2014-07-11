@@ -59,6 +59,8 @@ class SimStrip:
       ready = select.select([self.sock], [], [], 0.01)
       if ready[0]:
         rdata, addr = self.sock.recvfrom(5000)
+        #print "received data from", addr[0], "@", addr[1], len(rdata);
+        #self.hexdump(rdata);
         if ord(rdata[8]) == 0x00 and ord(rdata[9]) == 0x20:
           print "received poll request from", addr[0], "@", addr[1];
           # officially this needs to be answered with a reply
@@ -83,6 +85,8 @@ class SimStrip:
 
     self.sock.setblocking(1)
 
+  def hexdump(self, data):
+    print ":".join("{:02x}".format(ord(c)) for c in data);
 
 class Screen:
   def __init__(self, title):
@@ -152,4 +156,17 @@ if __name__ == "__main__":
   else:
     start(portDefault, num);
 
+'''
+def hexdump(src, length=16, sep='.'):
+  FILTER = ''.join([(len(repr(chr(x))) == 3) and chr(x) or sep for x in range(256)])
+  lines = []
+  for c in xrange(0, len(src), length):
+    chars = src[c:c+length]
+    hex = ' '.join(["%02x" % ord(x) for x in chars])
+    if len(hex) > 24:
+      hex = "%s %s" % (hex[:24], hex[24:])
+    printable = ''.join(["%s" % ((ord(x) <= 127 and FILTER[ord(x)]) or sep) for x in chars])
+    lines.append("%08x:  %-*s  |%s|\n" % (c, length * 3, hex, printable))
+  print ''.join(lines)
+'''
 

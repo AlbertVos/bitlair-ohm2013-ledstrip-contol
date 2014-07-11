@@ -15,6 +15,7 @@ from strip import Artnet;
 
 def poll():
   artnet = Artnet();
+  artnet.addr = [("255.255.255.255", 6454)];
   while True:
     artnet.poll();
     time.sleep(1.0);
