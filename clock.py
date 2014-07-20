@@ -7,36 +7,16 @@ from strip import *;
 lenx = 7;
 leny = 21;
 
-ip = [
-  [("192.168.89.150", 6454)], 
-  [("192.168.89.133", 6454)], 
-  [("192.168.89.131", 6454)], 
-  [("192.168.89.135", 6454)], 
-  [("192.168.89.132", 6454)], 
-  [("192.168.89.134", 6454)], 
-  [("192.168.89.149", 6454)], 
-];
-
-#ip = [
-#  [("localhost", 7000)], 
-#  [("localhost", 7001)], 
-#  [("localhost", 7002)], 
-#  [("localhost", 7003)], 
-#  [("localhost", 7004)], 
-#  [("localhost", 7005)], 
-#  [("localhost", 7006), ("192.168.1.255", 6454)], 
-#];
-
+addr = getAddr();
 
 def globalStop(self):
   #print "globalStop"
   clock.quit = True;
   time.sleep(.2);
-  for i in range(len(ip)):
-    self.artnet.addr = ip[i];
+  for i in range(len(addr)):
+    self.artnet.addr = [addr[i]];
     self.clear();
     self.send();
-
 
 class Clock1:
   count = 0;
@@ -61,7 +41,7 @@ class Clock1:
   def run(self):
     while not self.quit:
       for i in range(7):
-        self.strip2D.strip.artnet.addr = ip[i];
+        self.strip2D.strip.artnet.addr = [addr[i]];
         c = int(13.0 + 10.0 * math.sin((-i * 3 + float(self.count)) / 10.0));
         self.strip2D.strip.clear([0, c, c]);
         t = time.localtime();
@@ -110,7 +90,7 @@ class Clock2:
   def run(self):
     while not self.quit:
       for i in range(7):
-        self.strip2D.strip.artnet.addr = ip[i];
+        self.strip2D.strip.artnet.addr = [addr[i]];
         c = int(13.0 + 10.0 * math.sin((-i * 3 + float(self.count)) / 10.0));
         self.strip2D.strip.clear([0, c, c]);
         t = time.localtime();

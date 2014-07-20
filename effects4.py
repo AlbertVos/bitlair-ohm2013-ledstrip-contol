@@ -16,16 +16,6 @@ from plasma import *;
 lenx = 7;
 leny = 21;
 
-addr = [
-  [("192.168.89.150", 6454), ("localhost", 7001)],
-  [("192.168.89.133", 6454), ("localhost", 7002)],
-  [("192.168.89.131", 6454), ("localhost", 7003)],
-  [("192.168.89.135", 6454), ("localhost", 7004)],
-  [("192.168.89.132", 6454), ("localhost", 7005)],
-  [("192.168.89.134", 6454), ("localhost", 7006)],
-  [("192.168.89.149", 6454), ("localhost", 7007)],
-];
-
 colors = [
   [0, 255, 255],
   [255, 215, 0],
@@ -47,11 +37,9 @@ pixels = [
 ];
 
 
-#strip2D = Strip2D(lenx, leny);
-#police = Police3(strip2D);
-#police.run();
-
 strips = [];
+
+addr = getAddr();
 
 def fillThird(strip, index, color):
   for y in range(7):
@@ -90,7 +78,7 @@ def getColor(count, inv):
 
 for i in range(len(addr)):
   s = Strip2D(lenx, leny);
-  s.strip.artnet.addr = addr[i];
+  s.strip.artnet.addr = [addr[i]];
   strips.append(s);
 
 count = 0;
@@ -105,9 +93,5 @@ while True:
     s.fade(.25);
     s.send();
   time.sleep(0.2);
-
-
-strip2D.strip.stop();
-os.kill(os.getpid(), signal.SIGKILL);
 
 

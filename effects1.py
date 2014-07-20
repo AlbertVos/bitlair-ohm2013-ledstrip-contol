@@ -21,19 +21,6 @@ from matrix import *;
 lenx = 7;
 leny = 21;
 
-ip = [
-  "192.168.89.150", 
-  "192.168.89.133", 
-  "192.168.89.131", 
-  "192.168.89.135", 
-  "192.168.89.132", 
-  "192.168.89.134", 
-  "192.168.89.149", 
-];
-ip = [
-  "192.168.1.255", 
-];
-
 strip2D = Strip2D(lenx, leny);
 effects = [
   [Police1(strip2D), 3],
@@ -57,27 +44,13 @@ effects = [
 
 def globalStop(self):
   print "globalStop"
-  for i in range(len(ip)):
-    addr[0] = (ip[i], addr[0][1]);
-    addr[1] = (addr[1][0], 7000 + i);
-    self.artnet.addr = addr;
-    self.artnet.clear();
-    self.send();
+  self.artnet.clear();
+  self.send();
 
 strip2D.strip.globalStop = globalStop
 
 count = 0;
-ipcnt = 0;
 dowait = False;
-
-if False:
-  while True:
-    strip2D.strip.artnet.host = ip[ipcnt];
-    ipcnt = (ipcnt + 1) % len(ip);
-    effects[count][0].run(effects[count][1]);
-    strip2D.strip.artnet.clear();
-    count = (count + 1) % len(effects);
-
 
 
 def manage():
@@ -98,13 +71,10 @@ thread = threading.Thread(target = manage, args = []);
 thread.daemon = True;
 thread.start();
 
-addr = [("192.168.89.255", 6454), ("localhost", 7000)]
+addr = getAddr();
+strip2D.strip.artnet.addr = addr;
 
 while True:
-  addr[0] = (ip[ipcnt], addr[0][1]);
-  addr[1] = (addr[1][0], 7000 + ipcnt);
-  ipcnt = (ipcnt + 1) % len(ip);
-  strip2D.strip.artnet.addr = addr;
   effects[count][0].run(effects[count][1] * 10);
   for i in range(10):
     strip2D.strip.fade(.6);
@@ -115,20 +85,4 @@ while True:
   while dowait == False:
     time.sleep(0.1);
 
-while False:
-  strip2D.strip.artnet.addr = [(ip[ipcnt], 6454)];
-  ipcnt = (ipcnt + 1) % len(ip);
-  effects[count].run();
-  strip2D.strip.artnet.clear();
-  dowait = False;
-  while dowait == False:
-    time.sleep(0.1);
-
-strip2D.strip.stop();
-os.kill(os.getpid(), signal.SIGKILL);
-
-#thread = threading.Thread(target = discover, args = []);
-#thread.daemon = True;
-#thread.start();
-#thread.join();
 

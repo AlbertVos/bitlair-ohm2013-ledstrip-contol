@@ -54,6 +54,28 @@ def toTuppleArray(s):
   return eval(s);
 
 
+def getAddr(addr = []):
+  defaultPort = 6454;
+  if len(addr) > 0:
+    pass;
+  else:
+    # Check if addr= argument given or ADDR env. variable set
+    if "ADDR" in os.environ:
+      addr = toTuppleArray(os.environ.get('ADDR'));
+    elif len(sys.argv) > 1:
+      for i in range(1, len(sys.argv)):
+        if sys.argv[i].startswith("addr="):
+          addr = toTuppleArray(sys.argv[i][5:]);
+    else:
+      addr = [("192.168.89.255", 6454)];
+  # check for missing port and set to default
+  for i in range(len(addr)):
+    if len(addr[i]) == 1:
+      addr[i] = (addr[i][0], defaultPort);
+  #print "Addresses used:", addr;
+  return addr;
+
+
 #
 # The Artnet class provides operation for sending and receiving data
 # using the Artnet protocol.
@@ -62,7 +84,6 @@ def toTuppleArray(s):
 class Artnet:
   localHost = "0.0.0.0";
   localPort = 6454;
-  addr = [("192.168.89.255", 6454)];
   sock = 0;
   fade = 1.0;
 
@@ -75,29 +96,14 @@ class Artnet:
 
   def __init__(self, addr_ = []):
 
-    if len(addr_) > 0:
-      self.addr = addr_;
-    else:
-      # Check if addr= argument given or ADDR env. variable set
-      if "ADDR" in os.environ:
-        self.addr = toTuppleArray(os.environ.get('ADDR'));
-      if len(sys.argv) > 1:
-        for i in range(1, len(sys.argv)):
-          if sys.argv[i].startswith("addr="):
-            self.addr = toTuppleArray(sys.argv[i][5:]);
+    self.addr = getAddr(addr_);
+
     if "FADE" in os.environ:
       self.fade = float(os.environ.get('FADE'));
       if self.fade > 1.0:
         self.fade = 1.0;
       if self.fade < 0.0:
         self.fade = 0.0;
-
-    # check for missing port and set to default
-    for i in range(len(self.addr)):
-      if len(self.addr[i]) == 1:
-        self.addr[i] = (self.addr[i][0], self.localPort);
-
-    #print "Artnet addresses:", self.addr;
 
     # Check if host= argument given or HOST env. variable set
     if len(sys.argv) > 1:
