@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 """
-
 export ADDR='[("192.168.94.106", 6454), ("192.168.94.104", 6454), ("192.168.94.100", 6454), ("192.168.94.105", 6454), ("192.168.94.103", 6454), ("192.168.94.102", 6454), ("192.168.94.101", 6454)]'
 
 # Using the proxy:
@@ -75,8 +74,8 @@ class Proxy:
             break
         if index >= 0:
           rdata, raddr = self.socks[index].recvfrom(5000);
-          print "received data from ", raddr, " @", self.socksAddr[index], \
-            " to ", self.addr[index], " len=", len(rdata);
+          #print "received data from ", raddr, " @", self.socksAddr[index], \
+          #  " to ", self.addr[index], " len=", len(rdata);
 
           # If address of received data is not the target address store it 
           # as the source address.
