@@ -16,6 +16,7 @@ from rainbow import *;
 from stars import *;
 from night import *;
 from matrix import *;
+from power import *;
 
 
 lenx = 7;
@@ -39,6 +40,7 @@ effects = [
   [Stars2(strip2D), 10],
   [Hourglass(strip2D), 30],
   [Matrix(strip2D), 20],
+  [Power(strip2D), 12],
 ];
 
 
