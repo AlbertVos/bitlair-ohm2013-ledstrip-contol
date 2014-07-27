@@ -1,58 +1,66 @@
 #!/usr/bin/python
 
-import time
+import time;
+import math;
 from strip import *;
 
+period = 1800;
+period13 = period / 3;
+period23 = 2 * period / 3;
 
-class RainbowSlow(Effect):
-  xcount = 0;
-
-  def __init__(self, strip2D):
-    super(RainbowSlow, self).__init__(strip2D);
-    self.strip2D.strip.clear();
-  
-  def run(self, runtime = sys.maxint):
-    self.strip2D.send();
-    now = time.time();
-    while (not self.quit) and ((time.time() - now) < runtime):
-      self.strip2D.strip.clear(self.rainbow(self.xcount));
-      self.strip2D.strip.send();
-      self.xcount += 1;
-      time.sleep(0.1);
-
-    self.quit = False;
-
-  def rainbow(self, count):
-    count %= 1536;
-    if count < 256:
-      count -= 0;
-      return [255, count, 0];
-    if count < 512:
-      count -= 256;
-      return [255 - count, 255, 0];
-    if count < 768:
-      count -= 512;
-      return [0, 255, count];
-    if count < 1024:
-      count -= 768;
-      return [0, 255 - count, 255];
-    if count < 1280:
-      count -= 1024;
-      return [count, 0, 255];
-    if count < 1536:
-      count -= 1280;
-      return [255, 0, 255 - count];
-    return [0, 0, 0];
+period16 = period / 6;
+period26 = 2 * period / 6;
+period36 = 3 * period / 6;
+period46 = 4 * period / 6;
+period56 = 5 * period / 6;
 
 
-"""
-./rainbow.py addr=192.168.1.255
-./rainbow.py 'addr=[("192.168.1.255", ), ("localhost", 7000)]'
-./rainbow.py 'addr=[("192.168.1.255", 6454), ("localhost", 7000)]'
-"""
+def getValue1(count):
+  while count < 0:
+    count += period;
+  while count >= period:
+    count -= period;
+  if count >= period23:
+    return 0;
+  return 255 * math.sin(count * math.pi / period23);
 
-if __name__ == "__main__":
-  e = RainbowSlow(Strip2D(7, 21));
-  e.run();
+def getValue2(count):
+  while count < 0:
+    count += period;
+  while count >= period:
+    count -= period;
+
+  if count < period16:
+    return 255;
+  if count < period26:
+    count -= period16;
+    return 255 * (period16 - count) / period16;
+  if count < period46:
+    return 0;
+  if count < period56:
+    count -= period46;
+    return 255 * count / period16;
+  if count < period:
+    return 255;
+  return 0;
+
+def rainbow(count):
+  r = getValue2(count);
+  g = getValue2(count - period13);
+  b = getValue2(count - period23);
+  return [r, g, b];
+
+count = 0;
+strip = Strip(150);
+strip.clear();
+strip.send();
+while True:
+  strip.clear(rainbow(count));
+  strip.send();
+  count += 1;
+  if count >= period:
+    count -= period;
+  time.sleep(.1);
+
 
 

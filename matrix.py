@@ -5,43 +5,68 @@ import random;
 from strip import *;
 
 
+class Particle():
+  def __init__(self, matrix, level):
+    if level == 0:
+      self.x = random.randint(0, 6);
+      self.y = 21;
+      self.len = random.randint(0, 4) + 3;
+      self.color = level;
+      self.speed = 2 * random.randint(0, 1) + 2;
+      self.speedCount = 0;
+    if level == 1:
+      self.x = random.randint(0, 6);
+      self.y = 21;
+      self.len = random.randint(0, 3) + 2;
+      self.color = level;
+      self.speed = 2 * random.randint(0, 3) + 4;
+      self.speed = 4;
+      self.speedCount = 0;
+    if level == 2:
+      self.x = random.randint(0, 6);
+      self.y = 21;
+      self.len = random.randint(0, 2) + 2;
+      self.color = level;
+      self.speed = 2 * random.randint(0, 3) + 4;
+      self.speed = 6;
+      self.speedCount = 0;
+
 class Matrix(Effect):
-  stars = [];
-  numStars = 14;
-  bgcolor = 8;
-  color = [255, 130, 65, 30, 15];
+  particles = [[], [], []];
+  numParticles = [35, 35, 8];
+  bgcolor = 0;
+  colors = [7, 55, 160];
 
   def __init__(self, strip2D):
     super(Matrix, self).__init__(strip2D);
-    # x, y, len 
-    self.stars = [[random.randint(0, 6), random.randint(0, 20), \
-      random.randint(0, 6) + 3, random.randint(0, 4)] for i in range(self.numStars)];
     self.strip2D.strip.clear([0, self.bgcolor, 0]);
+    self.strip2D.send();
+    for level in range(len(self.numParticles)):
+      for i in range(self.numParticles[level]):
+        p = Particle(self, level);
+        p.y = random.randint(0, 20);
+        self.particles[level].append(p);
 
   def step(self, count):
-    if (count % 4) != 0:
-      return;
+    self.strip2D.strip.clear([0, self.bgcolor, 0]);
 
-    for i in range(150):
-      c = self.strip2D.strip.get(i);
-      #c[1] -= 5;
-      #if c[1] < self.bgcolor:
-      #  c[1] = self.bgcolor;
-      #self.strip2D.strip.set(i, c);
-      c[1] = self.bgcolor;
-      self.strip2D.strip.set(i, c);
-
-    for i in range(len(self.stars)):
-      if self.stars[i][1] <= -self.stars[i][2]:
-        self.stars[i] = [random.randint(0, 6), 20, \
-         random.randint(0, 6) + 3, random.randint(0, 4)]; 
-        s = self.stars[i]
-      else:
-        s = self.stars[i]
-      s[1] -= 1;
-      for y in range(s[2]):
-        y += s[1];
-        self.strip2D.set(s[0], y, [0, self.color[s[3]], 0]);
+    for level in range(len(self.numParticles)):
+      for i in range(self.numParticles[level]):
+        p = self.particles[level][i];
+        if p.y <= -p.len:
+          p = Particle(self, level);
+          self.particles[level][i] = p;
+        if p.speedCount <= 0:
+          p.y -= 1;
+          p.speedCount = p.speed;
+        else:
+          p.speedCount -= 1;
+        for y in range(p.len):
+          c = ((4 * p.len - 3 * y) * self.colors[p.color]) / (4 * p.len);
+          #cc = self.strip2D.get(p.x, p.y + y)[1];
+          #if cc > c:
+          #  c = cc;
+          self.strip2D.set(p.x, p.y + y, [0, c, 0]);
 
 
 if __name__ == "__main__":
