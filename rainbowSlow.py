@@ -15,7 +15,7 @@ period46 = 4 * period / 6;
 period56 = 5 * period / 6;
 
 
-def getValue1(count):
+def getColorValue1(count):
   while count < 0:
     count += period;
   while count >= period:
@@ -24,7 +24,7 @@ def getValue1(count):
     return 0;
   return 255 * math.sin(count * math.pi / period23);
 
-def getValue2(count):
+def getColorValue2(count):
   while count < 0:
     count += period;
   while count >= period:
@@ -45,9 +45,9 @@ def getValue2(count):
   return 0;
 
 def rainbow(count):
-  r = getValue2(count);
-  g = getValue2(count - period13);
-  b = getValue2(count - period23);
+  r = getColorValue2(count);
+  g = getColorValue2(count - period13);
+  b = getColorValue2(count - period23);
   return [r, g, b];
 
 count = 0;
