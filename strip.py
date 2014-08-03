@@ -274,6 +274,8 @@ class Strip2D:
     self.lenx = lenx;
     self.leny = leny;
     self.strip = Strip(lenx * leny, addr);
+    #self.f = [.20 * math.sin(math.pi * i / 26) for i in range(1, 12)];
+    self.f = [0.02, 0.03, 0.05, 0.09, 0.10, 0.11, 0.12, 0.13, 0.17, 0.19, 0.20];
 
   # Send data to the strip
   def send(self):
@@ -335,6 +337,20 @@ class Strip2D:
         p[1] = int(float(p[1]) * float(a));
         p[2] = int(float(p[2]) * float(a));
         self.set(x, y, p);
+
+  def coneFade(self, yy):
+    for y in range(self.leny):
+      if abs(y - yy) >= len(self.f):
+        f = self.f[len(self.f) - 1];
+      else:
+        f = self.f[abs(y - yy)];
+      for x in range(self.lenx):
+        c = self.get(x, y);
+        c = [int(c[0] * f), int(c[1] * f), int(c[2] * f)];
+      
+        self.set(x, y, c);
+        self.set(x, y, c);
+    
 
 
 #
