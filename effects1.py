@@ -19,6 +19,7 @@ from matrix import *;
 from power import *;
 from weird1 import *;
 from weird2 import *;
+from weird3 import *;
 
 
 lenx = 7;
@@ -45,6 +46,7 @@ effects = [
   [Power(strip2D), 12],
   [Weird1(strip2D), 12],
   [Weird2(strip2D), 12],
+  [Weird3(strip2D), 20],
 ];
 
 
