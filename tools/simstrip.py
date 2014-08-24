@@ -76,12 +76,12 @@ class SimStrip:
 
           # draw pixels
           l = len(rdata) - 18;
-          for i in range(0, l, 3):
-            x = 6 - (i / 3) % 7;
-            y = i / 3 / 7;
-            r = ord(rdata[18 + i]);
-            g = ord(rdata[18 + i + 1]);
-            b = ord(rdata[18 + i + 2]);
+          for i in range(0, 7 * 21):
+            x = 6 - (i % 7);
+            y = i / 7;
+            r = ord(rdata[18 + 3 * i + 9]);
+            g = ord(rdata[18 + 3 * i + 1 + 9]);
+            b = ord(rdata[18 + 3 * i + 2 + 9]);
             self.screen.draw(x, y, (r, g, b));
 
           self.screen.updateScreen();
