@@ -3,6 +3,8 @@ import random
 import math
 import time
 
+import sys
+sys.path.append('../lib')
 from strip import *;
 
 

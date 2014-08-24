@@ -1,16 +1,10 @@
 #!/usr/bin/python
 
 import time;
-import threading;
 
+import sys
+sys.path.append('../lib')
 from strip import *;
-
-from police import *;
-from rainbow import *;
-from bump import *;
-from cmorph import *;
-from lemmings import *;
-from plasma import *;
 
 
 lenx = 7;

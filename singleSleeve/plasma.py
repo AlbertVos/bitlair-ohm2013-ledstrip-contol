@@ -2,6 +2,9 @@
 
 import time
 import math
+
+import sys
+sys.path.append('../lib')
 from strip import *;
 
 class Plasma(Effect):

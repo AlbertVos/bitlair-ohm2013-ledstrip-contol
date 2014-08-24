@@ -2,6 +2,9 @@
 
 import time
 import sys
+
+import sys
+sys.path.append('../lib')
 from strip import *;
 
 # From: http://www.mobile1up.com/lemmings/blog/index-old.php

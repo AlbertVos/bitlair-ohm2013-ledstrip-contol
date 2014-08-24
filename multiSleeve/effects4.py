@@ -1,16 +1,10 @@
 #!/usr/bin/python
 
 import time;
-import threading;
 
+import sys
+sys.path.append('../lib')
 from strip import *;
-
-from police import *;
-from rainbow import *;
-from bump import *;
-from cmorph import *;
-from lemmings import *;
-from plasma import *;
 
 
 lenx = 7;
@@ -28,22 +22,23 @@ pixels = [
   [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ];
 
+
 pixels = [
   #0              5              10             15             20
-  [0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0] , 
-  [0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0] , 
-  [0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0] , 
-  [0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0] , 
-  [0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0]
+  [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0] , 
+  [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0] , 
+  [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]
 ];
 
 
 strips = [];
 
-def fillFifth(strip, index, color):
-  for y in range(21 / 5):
+addr = getAddr();
+
+def fillThird(strip, index, color):
+  for y in range(7):
     for x in range(7):
-      strip.set(x, y + index * 21 / 5, color);
+      strip.set(x, y + index * 7, color);
 
 def rainbow(count):
   count %= 1536;
@@ -75,8 +70,6 @@ def getColor(count, inv):
     return [255 - c[0], 255 - c[1], 255 - c[2]];
 
 
-addr = getAddr();
-
 for i in range(len(addr)):
   s = Strip2D(lenx, leny);
   s.strip.artnet.addr = [addr[i]];
@@ -90,7 +83,7 @@ while True:
   for x in range(len(strips)):
     for y in range(len(pixels)):
       s = strips[len(strips) - 1 - x];
-      fillFifth(s, y, getColor(count, pixels[y][xx + x]));
+      fillThird(s, y, getColor(count, pixels[y][xx + x]));
     s.fade(.25);
     s.send();
   time.sleep(0.2);

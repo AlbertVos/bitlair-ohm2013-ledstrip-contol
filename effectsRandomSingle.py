@@ -2,8 +2,12 @@
 
 import time;
 import threading;
+
+import sys
+sys.path.append('lib')
 from strip import *;
 
+sys.path.append('singleSleeve')
 from bump import *;
 from cmorph import *;
 from fade import *;
@@ -17,6 +21,11 @@ from stars import *;
 from night import *;
 from matrix import *;
 from power import *;
+from weird1 import *;
+from weird2 import *;
+from weird3 import *;
+from flash import *;
+from lighthouse import *;
 
 
 lenx = 7;
@@ -41,6 +50,11 @@ effects = [
   [Hourglass(strip2D), 30],
   [Matrix(strip2D), 20],
   [Power(strip2D), 12],
+  [Weird1(strip2D), 12],
+  [Weird2(strip2D), 12],
+  [Weird3(strip2D), 20],
+  [Lighthouse(strip2D), 10],
+  [Flash(strip2D), 10],
 ];
 
 
@@ -51,7 +65,8 @@ def globalStop(self):
 
 strip2D.strip.globalStop = globalStop
 
-count = 0;
+#count = 0;
+count = random.randint(0, len(effects) - 1);    
 dowait = False;
 
 
@@ -62,7 +77,10 @@ def manage():
     time.sleep(effects[count][1]);
     dowait = True;
     cnt = count;
-    count = (count + 1) % len(effects);
+    # Run fixed sequence of effects
+    #count = (count + 1) % len(effects);
+    # Run random sequence of effects
+    count = random.randint(0, len(effects) - 1);    
     effects[cnt][0].quit = True;
     while dowait == True:
       time.sleep(0.1);
@@ -77,7 +95,11 @@ addr = getAddr();
 strip2D.strip.artnet.addr = addr;
 
 while True:
-  effects[count][0].run(effects[count][1] * 10);
+  # Print effect name 
+  #print "---", type(effects[count][0]).__name__, "---"
+
+  #effects[count][0].run(effects[count][1] * 10);
+  effects[count][0].run(random.randint(6, 30) * 10);
   for i in range(10):
     strip2D.strip.fade(.6);
     strip2D.send();

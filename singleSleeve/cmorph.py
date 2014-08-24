@@ -1,6 +1,9 @@
 #!/usr/bin/python
 
 import time
+
+import sys
+sys.path.append('../lib')
 from strip import *;
 
 select = 1

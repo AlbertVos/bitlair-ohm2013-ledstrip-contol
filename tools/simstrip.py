@@ -39,14 +39,17 @@ class SimStrip:
           port = int(sys.argv[i][5:]);
 
     self.port = port;
+    print "SimStrip using port: ", self.port;
+    sys.stdout.flush();
+
     # Create UDP socket
     self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM);
     self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1);
     self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1);
     self.sock.bind(("0.0.0.0", self.port));
-    print("SimStrip using port:", self.port);
 
-    self.screen = Screen("Strip " + str(self.port % 100 + 1));
+    #self.screen = Screen("Strip " + str(self.port % 100 + 1));
+    self.screen = Screen("@" + str(self.port));
 
   # Shutdown the connection
   def close(self):

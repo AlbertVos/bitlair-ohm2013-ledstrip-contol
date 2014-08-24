@@ -2,6 +2,9 @@
 
 import time;
 import random;
+
+import sys
+sys.path.append('../lib')
 from strip import *;
 
 

@@ -86,6 +86,7 @@ class Artnet:
   localPort = 6454;
   sock = 0;
   fade = 1.0;
+  length = 170;
 
   #                       01234567   8   9   a   b   c   d   e   f   10  11  
   #                                  op-code protver seq phy universe len  
@@ -135,7 +136,7 @@ class Artnet:
   def clear(self):
     data = '';
     c = [0, 0, 0];
-    for i in range(150):
+    for i in range(self.length):
       data += chr(c[0]) + chr(c[1]) + chr(c[2]);
     for i in range(len(self.addr)):
       self.sock.sendto(self.dataHeader + data, self.addr[i])
@@ -273,10 +274,15 @@ class Strip2D:
   def __init__(self, lenx, leny, addr = []):
     self.lenx = lenx;
     self.leny = leny;
-    self.strip = Strip(lenx * leny, addr);
+    #self.strip = Strip(lenx * leny, addr);
+    self.strip = Strip(150, addr);
+    #self.f = [.20 * math.sin(math.pi * i / 26) for i in range(1, 12)];
+    self.f = [0.02, 0.03, 0.05, 0.09, 0.10, 0.11, 0.12, 0.13, 0.17, 0.19, 0.20];
 
   # Send data to the strip
   def send(self):
+    for i in range(self.lenx * self.leny, self.strip.length):
+      self.strip.set(i, [0, 0, 0]);
     self.strip.send();
 
   # Set the color of the led at (x, y).
@@ -335,6 +341,20 @@ class Strip2D:
         p[1] = int(float(p[1]) * float(a));
         p[2] = int(float(p[2]) * float(a));
         self.set(x, y, p);
+
+  def coneFade(self, yy):
+    for y in range(self.leny):
+      if abs(y - yy) >= len(self.f):
+        f = self.f[len(self.f) - 1];
+      else:
+        f = self.f[abs(y - yy)];
+      for x in range(self.lenx):
+        c = self.get(x, y);
+        c = [int(c[0] * f), int(c[1] * f), int(c[2] * f)];
+      
+        self.set(x, y, c);
+        self.set(x, y, c);
+    
 
 
 #
