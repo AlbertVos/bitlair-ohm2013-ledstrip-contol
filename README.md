@@ -10,10 +10,10 @@ The default (broadcast) address is 192.168.89.255; the default port is 6454.
 
 You can specify the address on the command-line:
 
-'''
+```
 export ADDR='[("192.168.1.255", 6454)]'
 export ADDR=[("192.168.1.255", 6454), ("localhost", 7000)]
-'''
+```
 
 You can use a non-broadcast address to control one strip.
 
