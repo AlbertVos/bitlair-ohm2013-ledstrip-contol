@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 """
 export ADDR='[("192.168.94.106", 6454), ("192.168.94.104", 6454), ("192.168.94.100", 6454), ("192.168.94.105", 6454), ("192.168.94.103", 6454), ("192.168.94.102", 6454), ("192.168.94.101", 6454)]'
@@ -21,7 +21,8 @@ export 'ADDR=[("192.168.1.108", 6454), ("192.168.1.109", 6454)]'
 import socket
 import time
 import signal
-import sys
+import sys;
+sys.path.append('../lib')
 import select
 import threading
 import os
@@ -35,8 +36,8 @@ def hexdump(s):
         lin = [c for c in s[b : b + 16]]
         hxdat = ' '.join('%02X' % ord(c) for c in lin)
         pdat = ''.join((c if 32 <= ord(c) <= 126 else '.' )for c in lin)
-        print '  %04x: %-48s %s' % (b, hxdat, pdat)
-    print
+        print( '  %04x: %-48s %s' % (b, hxdat, pdat) )
+    print()
 
 
 class Proxy:
@@ -63,7 +64,7 @@ class Proxy:
       self.socks.append(sock);
       self.socksSrc.append(());
       self.socksAddr.append((self.localHost, self.localPort + i));
-      print "Channel ", self.socksAddr[i], " to ", self.addr[i];
+      print( "Channel ", self.socksAddr[i], " to ", self.addr[i] );
 
     # Add broadcast address to the lists
     
@@ -84,7 +85,7 @@ class Proxy:
     self.addr.append(broadcastTo);
     self.socksAddr.append(broadcastAddr);
     i = len(self.socks) - 1;
-    print "Channel ", self.socksAddr[i], " to ", self.addr[i];
+    print( "Channel ", self.socksAddr[i], " to ", self.addr[i] );
 
 
   def run(self):
@@ -117,7 +118,7 @@ class Proxy:
             #print "Send to ", self.socksSrc[index];
             self.socks[index].sendto(rdata, self.socksSrc[index]);
           else:
-            print "Unknown address", raddr
+            print( "Unknown address", raddr )
 
 
 def signal_handler(signal_, frame):

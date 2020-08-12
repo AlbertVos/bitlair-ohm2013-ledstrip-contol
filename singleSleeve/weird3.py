@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import time;
 import random;
@@ -31,7 +31,12 @@ class Weird3(Effect):
       self.strip2D.strip.set(i, self.colors[random.randint(0, len(self.colors) - 1)]);
     self.strip2D.send();
 
-  def run(self, runtime = sys.maxint):
+  def run(self, runtime = None):
+    if ( runtime == None ):
+         if ( hasattr( sys, "maxint" ) ): # Python 2
+            runtime = sys.maxint
+         elif ( hasattr( sys, "maxsize" ) ): # Python 3
+            runtime = sys.maxsize
     while self.quit == False:
       for i in range(150):
         self.strip2D.strip.set(i, self.colors[random.randint(0, len(self.colors) - 1)]);

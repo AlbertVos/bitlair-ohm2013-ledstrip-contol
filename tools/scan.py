@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 """
   Poll all available poles and give them a color, so you can determine the
   order of the ip addresses to the physical location.
@@ -6,6 +6,7 @@
 
 import time;
 import sys;
+sys.path.append('../lib')
 from strip import *;
 
 color = [
@@ -38,12 +39,12 @@ def scan():
   while (True):
     strip.artnet.addr = [("192.168.89.255", 6454)];
     devices = strip.artnet.poll();
-    print devices
+    print( devices )
     for i in range(len(devices)):
       strip.artnet.addr = [devices[i]];
       strip.clear(color[i]);
       strip.send();
-      print "-> ", devices[i], color[i], colornames[i]
+      print( "-> ", devices[i], color[i], colornames[i] )
       time.sleep(.1);
     time.sleep(10);
 

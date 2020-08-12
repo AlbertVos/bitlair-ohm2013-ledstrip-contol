@@ -1,6 +1,8 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import time;
+import sys;
+sys.path.append('../lib')
 from strip import *;
 
 

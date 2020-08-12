@@ -1,7 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import time;
 import threading;
+import sys;
+sys.path.append('../lib')
+sys.path.append('../singleSleeve')
 from strip import *;
 from power import *;
 
@@ -23,7 +26,7 @@ if False:
   for i in range(len(strips)):
     s = strips[i];
     s.auto = True;
-    thread = threading.Thread(target = s.run, args=[s]);
+    thread = threading.Thread(target = s.run, args=[]);
     thread.daemon = True;
     thread.start();
   while True:
@@ -34,7 +37,7 @@ if True:
     s = strips[i];
     s.auto = False;
     s.offset = 13 * i;
-    thread = threading.Thread(target = s.run, args=[s]);
+    thread = threading.Thread(target = s.run, args=[]);
     thread.daemon = True;
     thread.start();
   while True:

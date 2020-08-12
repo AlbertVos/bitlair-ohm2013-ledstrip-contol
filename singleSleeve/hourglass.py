@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import time;
 import random;
@@ -26,7 +26,7 @@ class Hourglass(Effect):
 
   def init(self):
     for i in range(0, self.numlayer):
-      for j in range(self.numpart / self.numlayer):
+      for j in range(self.numpart // self.numlayer):
         self.top.append([random.randint(0, 6), i, i]);
     self.active = [];
     self.bottom = [];
@@ -43,7 +43,7 @@ class Hourglass(Effect):
       self.initcnt -= 1;
       for i in range(self.numlayer):
         for j in range(7):
-          self.strip2D.set(j, 20 - (self.initcnt / 3 + i), self.colors[1]);
+          self.strip2D.set(j, 20 - (self.initcnt // 3 + i), self.colors[1]);
       return;
 
     # check for end

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import time
 
@@ -24,7 +24,12 @@ class Rainbow(Effect):
     super(Rainbow, self).__init__(strip2D);
     self.strip2D.strip.clear();
   
-  def run(self, runtime = sys.maxint):
+  def run(self, runtime = None):
+    if ( runtime == None ):
+         if ( hasattr( sys, "maxint" ) ): # Python 2
+            runtime = sys.maxint
+         elif ( hasattr( sys, "maxsize" ) ): # Python 3
+            runtime = sys.maxsize
     """
     self.strip2D.pattern([ \
       [255, 0, 0],   # red

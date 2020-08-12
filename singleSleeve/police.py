@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import time
 
@@ -22,7 +22,12 @@ class Police1(Effect):
     super(Police1, self).__init__(strip2D);
     self.strip2D.strip.clear();
 
-  def run(self, runtime = sys.maxint):
+  def run(self, runtime = None):
+    if ( runtime == None ):
+         if ( hasattr( sys, "maxint" ) ): # Python 2
+            runtime = sys.maxint
+         elif ( hasattr( sys, "maxsize" ) ): # Python 3
+            runtime = sys.maxsize
     count = 0;
     count2 = 0;
     for x in range(self.strip2D.lenx):
@@ -65,7 +70,12 @@ class Police2(Effect):
         self.strip2D.set(x, y, self.strip2D.get(x + 1, y));
       self.strip2D.set(self.strip2D.lenx - 1, y, c);
 
-  def run(self, runtime = sys.maxint):
+  def run(self, runtime = None):
+    if ( runtime == None ):
+         if ( hasattr( sys, "maxint" ) ): # Python 2
+            runtime = sys.maxint
+         elif ( hasattr( sys, "maxsize" ) ): # Python 3
+            runtime = sys.maxsize
     for x in range(self.strip2D.lenx):
       for y in range(self.strip2D.leny):
         self.strip2D.set(x, y, self.color[x]);
@@ -102,7 +112,12 @@ class Police3(Effect):
       count /= 2;
       return [128 - count, 128 - count, 255];
 
-  def run(self, runtime = sys.maxint):
+  def run(self, runtime = None):
+    if ( runtime == None ):
+         if ( hasattr( sys, "maxint" ) ): # Python 2
+            runtime = sys.maxint
+         elif ( hasattr( sys, "maxsize" ) ): # Python 3
+            runtime = sys.maxsize
     count = 0;
     count2 = 0;
     now = time.time();

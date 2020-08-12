@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import time;
 import random;
@@ -27,7 +27,7 @@ class Night(Effect):
 
   def init(self):
     for i in range(0, self.numlayer):
-      for j in range(self.numpart / self.numlayer):
+      for j in range(self.numpart // self.numlayer):
         self.top.append([random.randint(0, 6), i, i]);
     self.active = [];
     self.bottom = [];
@@ -44,7 +44,7 @@ class Night(Effect):
       self.initcnt -= 1;
       for i in range(self.numlayer):
         for j in range(7):
-          self.strip2D.set(j, 20 - (self.initcnt / 3 + i), self.colors[1]);
+          self.strip2D.set(j, 20 - (self.initcnt // 3 + i), self.colors[1]);
       return;
 
     # check for end
@@ -72,7 +72,7 @@ class Night(Effect):
     for i in range(len(self.active)):
       self.strip2D.set(self.active[i][0], 20 - self.active[i][2], self.colors[1]);
 
-    m = 129 - (count / 50) % 7;
+    m = 129 - (count // 50) % 7;
     a = -1;
     if self.strip2D.strip.get(m - 0) == self.colors[1]:
       a = 180;

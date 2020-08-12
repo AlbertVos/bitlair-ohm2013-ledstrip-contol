@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import time;
 import threading;
@@ -59,7 +59,7 @@ effects = [
 
 
 def globalStop(self):
-  print "globalStop"
+  print( "globalStop" )
   self.artnet.clear();
   self.send();
 
@@ -96,7 +96,7 @@ strip2D.strip.artnet.addr = addr;
 
 while True:
   # Print effect name 
-  #print "---", type(effects[count][0]).__name__, "---"
+  #print( "---", type(effects[count][0]).__name__, "---" )
 
   #effects[count][0].run(effects[count][1] * 10);
   effects[count][0].run(random.randint(6, 30) * 10);
@@ -104,7 +104,7 @@ while True:
     strip2D.strip.fade(.6);
     strip2D.send();
     time.sleep(0.05);
-  strip2D.strip.artnet.clear();
+  #strip2D.strip.artnet.clear();
   dowait = False;
   while dowait == False:
     time.sleep(0.1);

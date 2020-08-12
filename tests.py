@@ -1,12 +1,14 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
+import sys
+sys.path.append('./lib')
 from strip import *;
 import time;
 import random;
 
 
 def test1():
-  print "*** test1 ***"
+  print( "*** test1 ***" )
 
   strip = Strip(150);
 
@@ -32,7 +34,7 @@ def test1():
 
 
 def test2(count):
-  print "*** test2 ***"
+  print( "*** test2 ***" )
 
   lenx = 7;
   leny = 21;
@@ -88,7 +90,7 @@ def test2(count):
 
 
 def test3(count):
-  print "*** test3 ***"
+  print( "*** test3 ***" )
 
   lenx = 7;
   leny = 21;
@@ -127,7 +129,7 @@ def test3(count):
 
 
 def test4(count):
-  print "*** test4 ***"
+  print( "*** test4 ***" )
 
   lenx = 7;
   leny = 21;
@@ -155,7 +157,7 @@ def test4(count):
 
 
 def test5(count):
-  print "*** test5 ***"
+  print( "*** test5 ***" )
 
   lenx = 7;
   leny = 21;
@@ -179,7 +181,7 @@ def test5(count):
 
 
 def testFade(count):
-  print "*** testFade ***"
+  print( "*** testFade ***" )
 
   strip = Strip(150);
   while count > 0:
@@ -195,8 +197,8 @@ def testFade(count):
 
 
 def discover(count):
-  print "*** discover ***"
-  print "Discovery test (takes 520 seconds)"
+  print( "*** discover ***" )
+  print( "Discovery test (takes 520 seconds)" )
 
   artnet = Artnet();
   while count > 0:

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import time;
 import random;
@@ -14,8 +14,13 @@ class Bump1(Effect):
     super(Bump1, self).__init__(strip2D);
     self.strip2D.strip.clear();
 
-  def run(self, runtime = sys.maxint):
-      
+  def run(self, runtime = None):
+    if ( runtime == None ):
+         if ( hasattr( sys, "maxint" ) ): # Python 2
+            runtime = sys.maxint
+         elif ( hasattr( sys, "maxsize" ) ): # Python 3
+            runtime = sys.maxsize
+
     self.strip2D.strip.clear([255, 255, 255]);
 
     for x in range(self.strip2D.lenx):
