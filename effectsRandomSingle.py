@@ -12,6 +12,7 @@ from bump import *;
 from cmorph import *;
 from fade import *;
 from fire import *;
+from fire2 import *;
 from hourglass import *;
 from lemmings import *;
 from plasma import *;
@@ -42,6 +43,7 @@ effects = [
   [CMorph(strip2D), 7],
   [Plasma(strip2D), 30],
   [Fire(strip2D), 30],
+  [Fire2(strip2D), 30],
   [Night(strip2D), 30],
   [Fade1(strip2D), 3],
   [Fade2(strip2D), 3],
