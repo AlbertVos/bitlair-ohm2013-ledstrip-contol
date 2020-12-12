@@ -1,9 +1,8 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import time
 import sys
 
-import sys
 sys.path.append('../lib')
 from strip import *;
 
@@ -113,14 +112,19 @@ class Lemmings1(Effect):
   def __init__(self, strip2D):
     super(Lemmings1, self).__init__(strip2D);
     self.strip2D.strip.clear();
+    self.strip2D.send();
 
-  def run(self, runtime = sys.maxint):
+  def run(self, runtime = None):
+    if ( runtime == None ):
+         if ( hasattr( sys, "maxint" ) ): # Python 2
+            runtime = sys.maxint
+         elif ( hasattr( sys, "maxsize" ) ): # Python 3
+            runtime = sys.maxsize
     start = 10;
     end = 77;
     count = start - self.strip2D.lenx;
 
     now = time.time();
-    self.strip2D.strip.artnet.clear();
     while (not self.quit) and ((time.time() - now) < runtime):
       for i in range(len(self.sprites)):
         self.strip2D.strip.clear();

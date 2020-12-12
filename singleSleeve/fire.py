@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 import random
 import math
 import time
@@ -26,7 +26,12 @@ class Fire(Effect):
       self.gdata[i] = 0
       self.bdata[i] = 0
 
-  def run(self, runtime = sys.maxint):
+  def run(self, runtime = None):
+    if ( runtime == None ):
+         if ( hasattr( sys, "maxint" ) ): # Python 2
+            runtime = sys.maxint
+         elif ( hasattr( sys, "maxsize" ) ): # Python 3
+            runtime = sys.maxsize
       
     particles = [Particle(self, random.randint(0, self.strip2D.lenx - 1), \
       random.randint(0, self.strip2D.leny)) for each in range(self.pcount)]
@@ -37,7 +42,7 @@ class Fire(Effect):
         particles[i].updateparticle()
 
       for i in range(150):
-        self.strip2D.set((149 - i) % 7, (149 - i) / 7, \
+        self.strip2D.set((149 - i) % 7, (149 - i) // 7, \
           [self.rdata[i], self.gdata[i], self.bdata[i]]);
 
       self.strip2D.send();
@@ -61,7 +66,7 @@ class Particle:
     self.y = y
     self.x = x
     self.rnderp = id(self) % 9
-    self.speed = (self.rnderp / 18) + 1
+    self.speed = 1#(self.rnderp // 18) + 1
     self.life = random.uniform(1, self.fire.strip2D.leny - 5)
 
   def updateparticle(self):

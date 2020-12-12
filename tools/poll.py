@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 """
 # default values -> broadcast at 192.168.89.255
@@ -12,6 +12,7 @@
 import time;
 import signal;
 import sys;
+sys.path.append('../lib')
 import os;
 from strip import Artnet;
 

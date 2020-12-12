@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import time
 
@@ -72,7 +72,12 @@ class CMorph(Effect):
       b += int(count * self.db / 60);
       return [r, g, b];
 
-  def run(self, runtime = sys.maxint):
+  def run(self, runtime = None):
+    if ( runtime == None ):
+         if ( hasattr( sys, "maxint" ) ): # Python 2
+            runtime = sys.maxint
+         elif ( hasattr( sys, "maxsize" ) ): # Python 3
+            runtime = sys.maxsize
     count = 0;
     count2 = 0;
     now = time.time();

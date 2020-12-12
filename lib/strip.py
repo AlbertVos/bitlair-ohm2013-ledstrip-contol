@@ -72,7 +72,7 @@ def getAddr(addr = []):
   for i in range(len(addr)):
     if len(addr[i]) == 1:
       addr[i] = (addr[i][0], defaultPort);
-  #print "Addresses used:", addr;
+  #print( "Addresses used:", addr )
   return addr;
 
 
@@ -90,10 +90,10 @@ class Artnet:
 
   #                       01234567   8   9   a   b   c   d   e   f   10  11  
   #                                  op-code protver seq phy universe len  
-  dataHeader = bytearray("Art-Net\x00\x00\x50\x00\x0e\x00\x00\x00\x00\x02\x00")
+  dataHeader = bytearray( b"Art-Net\x00\x00\x50\x00\x0e\x00\x00\x00\x00\x02\x00" )
   #                    01234567   8   9   a   b   c   d
   #                               op-code protver 
-  pollMsg = bytearray("Art-Net\x00\x00\x20\x00\x0e\x00\xff");
+  pollMsg = bytearray( b"Art-Net\x00\x00\x20\x00\x0e\x00\xff" );
 
   def __init__(self, addr_ = []):
 
@@ -134,22 +134,22 @@ class Artnet:
 
   # Clear the entire strip
   def clear(self):
-    data = '';
-    c = [0, 0, 0];
+    data = self.dataHeader
     for i in range(self.length):
-      data += chr(c[0]) + chr(c[1]) + chr(c[2]);
+      data += b"\x00\x00\x00"
     for i in range(len(self.addr)):
-      self.sock.sendto(self.dataHeader + data, self.addr[i])
+      self.sock.sendto( data, self.addr[i])
 
   # Send the data of a strip
   def send(self, strip):
-    data = '';
+    data = bytearray(3*strip.length)
     for i in reversed(range(strip.length)):
-      c = strip.get(i);
-      #print "send ", i, str(c[0]), str(c[1]), str(c[2]);
-      data += chr(int(c[0] * self.fade)) + chr(int(c[1] * self.fade)) + chr(int(c[2] * self.fade));
-    for i in range(len(self.addr)):
-      self.sock.sendto(self.dataHeader + data, self.addr[i])
+      c = strip.get(strip.length - i);
+      data[3*i+0] = int( c[0] * self.fade )
+      data[3*i+1] = int( c[1] * self.fade )
+      data[3*i+2] = int( c[2] * self.fade )
+    for i in range(len(self.addr)):      
+      self.sock.sendto( self.dataHeader + data, self.addr[i])
 
   # Run poll for 5 seconds.
   def poll(self):
@@ -157,17 +157,17 @@ class Artnet:
     self.sock.setblocking(0)
     for i in range(len(self.addr)):
       self.sock.sendto(self.pollMsg, self.addr[i])
-    print "=== Sent artnet poll ==="
+    print( "=== Sent artnet poll ===" )
     now = time.time();
     while (time.time() - now) < 5:
       ready = select.select([self.sock], [], [], 0.5)
       if ready[0]:
         rdata, raddr = self.sock.recvfrom(5000)
-        if ord(rdata[8]) == 0x00 and ord(rdata[9]) == 0x20:
-          print "received poll request from", raddr[0], "@", raddr[1];
+        if (rdata[8]) == 0x00 and (rdata[9]) == 0x20:
+          print( "received poll request from", raddr[0], "@", raddr[1] )
           # officially this needs to be answered with a reply
-        if ord(rdata[8]) == 0x00 and ord(rdata[9]) == 0x21:
-          print "received poll reply from", raddr[0], "@", raddr[1];
+        if (rdata[8]) == 0x00 and (rdata[9]) == 0x21:
+          print( "received poll reply from", raddr[0], "@", raddr[1] )
           devices.append(raddr);
     self.sock.setblocking(1)
     return devices;
@@ -422,7 +422,12 @@ class Effect(object):
     The step method is called repeatedly with a sleep of .02 
     in between; the strip send method is called automatically.
   """
-  def run(self, runtime = sys.maxint):
+  def run(self, runtime = None ):
+    if ( runtime == None ):
+         if ( hasattr( sys, "maxint" ) ):
+            runtime = sys.maxint
+         elif ( hasattr( sys, "maxsize" ) ):
+            runtime = sys.maxsize
 
     self.strip2D.strip.clear([0, 0, 0]);
     self.strip2D.send();

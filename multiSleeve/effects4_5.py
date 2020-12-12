@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import time;
 
@@ -34,9 +34,9 @@ pixels = [
 strips = [];
 
 def fillFifth(strip, index, color):
-  for y in range(21 / 5):
+  for y in range(21 // 5):
     for x in range(7):
-      strip.set(x, y + index * 21 / 5, color);
+      strip.set(x, y + index * 21 // 5, color);
 
 def rainbow(count):
   count %= 1536;

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import time
 import math
@@ -23,7 +23,12 @@ class Plasma(Effect):
     self.color = self.color1;
     self.num_col = self.num_col1;
   
-  def run(self, runtime = sys.maxint):
+  def run(self, runtime = None):
+    if ( runtime == None ):
+         if ( hasattr( sys, "maxint" ) ): # Python 2
+            runtime = sys.maxint
+         elif ( hasattr( sys, "maxsize" ) ): # Python 3
+            runtime = sys.maxsize
     now = time.time();
     while (not self.quit) and ((time.time() - now) < runtime):
       self.draw();
