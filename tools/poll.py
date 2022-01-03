@@ -9,27 +9,27 @@
 ./poll.py 'addr=[("192.168.1.255",),("localhost",7000)]'
 """
 
-import time;
-import signal;
-import sys;
+import time
+import signal
+import sys
 sys.path.append('../lib')
-import os;
-from strip import Artnet;
+import os
+from strip import Artnet
 
 def poll():
-  global artnet;
-  artnet = Artnet();
-  artnet.addr = [("255.255.255.255", 6454)];
+  global artnet
+  artnet = Artnet()
+  artnet.addr = [("255.255.255.255", 6454)]
   while True:
-    artnet.poll();
-    time.sleep(1.0);
+    artnet.poll()
+    time.sleep(1.0)
 
 def signal_handler(signal_, frame):
-  artnet.close();
-  os.kill(os.getpid(), signal.SIGKILL);
+  artnet.close()
+  os.kill(os.getpid(), signal.SIGKILL)
   sys.exit(0)
 
 signal.signal(signal.SIGINT, signal_handler)
-poll();
+poll()
 
 

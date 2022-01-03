@@ -5,7 +5,7 @@ import time
 
 import sys
 sys.path.append('../lib')
-from strip import *;
+from strip import *
 
 import termios, fcntl
 
@@ -22,12 +22,12 @@ class Fire2(Effect):
   restoretime = 0
 
   def __init__(self, strip2D):
-    super(Fire2, self).__init__(strip2D);
+    super(Fire2, self).__init__(strip2D)
     
     self.pcount = 10
     
-    self.strip2D.strip.clear([0, 0, 0]);
-    self.strip2D.send();
+    self.strip2D.strip.clear([0, 0, 0])
+    self.strip2D.send()
 
     for i in range(150):
       self.rdata[i] = 0
@@ -36,15 +36,15 @@ class Fire2(Effect):
 
   def run(self, runtime = None):
     if ( runtime == None ):
-         if ( hasattr( sys, "maxint" ) ): # Python 2
-            runtime = sys.maxint
-         elif ( hasattr( sys, "maxsize" ) ): # Python 3
-            runtime = sys.maxsize
+      if ( hasattr( sys, "maxint" ) ): # Python 2
+        runtime = sys.maxint
+      elif ( hasattr( sys, "maxsize" ) ): # Python 3
+        runtime = sys.maxsize
       
-        particles = [Particle(self, random.randint(0, self.strip2D.lenx - 1), \
+    particles = [Particle(self, random.randint(0, self.strip2D.lenx - 1), \
       self.strip2D.leny) for each in range(self.maxparticles)]
 
-    starttime = time.time();
+    starttime = time.time()
      
     fd = sys.stdin.fileno()
     oldterm = termios.tcgetattr(fd)
@@ -55,6 +55,7 @@ class Fire2(Effect):
     oldflags = fcntl.fcntl(fd, fcntl.F_GETFL)
     fcntl.fcntl(fd, fcntl.F_SETFL, oldflags | os.O_NONBLOCK)
 
+    heat = 0
     while (not self.quit or heat) and ((time.time() - starttime) < runtime):
       if ( self.quit ):
         if ( heat ):
@@ -77,7 +78,7 @@ class Fire2(Effect):
           self.palette = 2
         elif c == "3":
           self.palette = 3
-                  elif c == "4":
+        elif c == "4":
           self.palette = 4
         elif c == "5":
           self.palette = 5
@@ -87,7 +88,7 @@ class Fire2(Effect):
           self.restoretime = time.time() + 5
         elif c == "q":
           print( "quit" )
-          self.quit = True;
+          self.quit = True
         elif c == "+" or c == "=":
           self.maxbrightness += 1
           if ( self.maxbrightness > 255 ):
@@ -113,9 +114,9 @@ class Fire2(Effect):
         
       for i in range(150):
         self.strip2D.set((149 - i) % self.strip2D.lenx, int((149 - i) / self.strip2D.lenx), \
-          [self.maxbrightness * self.rdata[i] / 255, self.maxbrightness * self.gdata[i] / 255, self.maxbrightness * self.bdata[i] / 255]);
+          [self.maxbrightness * self.rdata[i] / 255, self.maxbrightness * self.gdata[i] / 255, self.maxbrightness * self.bdata[i] / 255])
 
-      self.strip2D.send();
+      self.strip2D.send()
       self.cleanarray()
       time.sleep(0.03)
       
@@ -125,7 +126,7 @@ class Fire2(Effect):
 
     termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
     fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)        
-    self.quit = False;
+    self.quit = False
 
   def cleanarray(self):
     for i in range(150):
@@ -138,7 +139,7 @@ class Particle:
 
   def __init__(self, fire, x, y):
     self.rgb = (0,0,0)
-    self.fire = fire;
+    self.fire = fire
     self.y = y
     self.x = x
     self.rnderp = id(self) % 9
@@ -188,7 +189,7 @@ class Particle:
       r = g
       g = b
       b = temp
-          elif ( self.palette == 4 ):
+    elif ( self.palette == 4 ):
       # purple red RBG
       temp = b
       b = g
@@ -228,6 +229,6 @@ class Particle:
 """
 
 if __name__ == "__main__":
-  e = Fire2(Strip2D(7, 21));
-  e.run();
+  e = Fire2(Strip2D(7, 21))
+  e.run()
 

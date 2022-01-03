@@ -5,7 +5,7 @@ import threading
 import sys
 sys.path.append('../lib')
 from strip import *
-import random;
+import random
 
 import termios, fcntl
 fd = sys.stdin.fileno()
@@ -265,7 +265,7 @@ class Eyes(Effect):
                         
             except IOError: pass
           
-            time.sleep( 0.1 );
+            time.sleep( 0.1 )
 
         self.quit = False
         for eye in eyes:

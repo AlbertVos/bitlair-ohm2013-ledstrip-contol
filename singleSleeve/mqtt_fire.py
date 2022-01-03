@@ -6,7 +6,7 @@ import time
 
 import sys
 sys.path.append('../lib')
-from strip import *;
+from strip import *
 
 import termios, fcntl
 
@@ -25,17 +25,17 @@ class Mqtt_Fire(Effect):
   #pcount = 10 # set at init
   maxparticles = 300
 
-  maxbrightness = 255  
+  maxbrightness = 255
   palette = 0
   restoretime = 0
 
   def __init__(self, strip2D):
-    super(Mqtt_Fire, self).__init__(strip2D);
-    
+    super(Mqtt_Fire, self).__init__(strip2D)
+
     self.pcount = 10
-    
-    self.strip2D.strip.clear([0, 0, 0]);
-    self.strip2D.send();
+
+    self.strip2D.strip.clear([0, 0, 0])
+    self.strip2D.send()
 
     for i in range(150):
       self.rdata[i] = 0
@@ -48,12 +48,12 @@ class Mqtt_Fire(Effect):
             runtime = sys.maxint
          elif ( hasattr( sys, "maxsize" ) ): # Python 3
             runtime = sys.maxsize
-      
+
     particles = [Particle(self, random.randint(0, self.strip2D.lenx - 1), \
       self.strip2D.leny) for each in range(self.maxparticles)]
 
-    starttime = time.time();
-     
+    starttime = time.time()
+
     fd = sys.stdin.fileno()
     oldterm = termios.tcgetattr(fd)
     newattr = termios.tcgetattr(fd)
@@ -89,13 +89,13 @@ class Mqtt_Fire(Effect):
           self.palette = 4
         elif c == "5":
           self.palette = 5
-          
+
         elif c == "9":
           self.palette = 3
           self.restoretime = time.time() + 5
         elif c == "q":
           print( "quit" )
-          self.quit = True;
+          self.quit = True
         elif c == "+" or c == "=":
           self.maxbrightness += 1
           if ( self.maxbrightness > 255 ):
@@ -108,9 +108,9 @@ class Mqtt_Fire(Effect):
           self.pcount = self.maxparticles - 2
         elif c == "l":
           self.pcount = 20
-            
+
       except IOError: pass
-    
+
       if ( self.restoretime and self.restoretime < time.time() ):
         self.palette = 0
         self.restoretime = 0
@@ -121,12 +121,12 @@ class Mqtt_Fire(Effect):
 
       for i in range(150):
         self.strip2D.set((149 - i) % self.strip2D.lenx, int((149 - i) / self.strip2D.lenx), \
-          [self.maxbrightness * self.rdata[i] / 255, self.maxbrightness * self.gdata[i] / 255, self.maxbrightness * self.bdata[i] / 255]);
+          [self.maxbrightness * self.rdata[i] / 255, self.maxbrightness * self.gdata[i] / 255, self.maxbrightness * self.bdata[i] / 255])
 
-      self.strip2D.send();
+      self.strip2D.send()
       self.cleanarray()
       time.sleep(0.03)
-      
+
       # Add new particle
       if( self.pcount < self.maxparticles and random.randint(0, 256 - heat) < 3 + heat ):
         self.pcount += 1
@@ -136,8 +136,8 @@ class Mqtt_Fire(Effect):
     client.loop_stop()
 
     termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
-    fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)        
-    self.quit = False;
+    fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
+    self.quit = False
 
   def cleanarray(self):
     for i in range(150):
@@ -150,7 +150,7 @@ class Particle:
 
   def __init__(self, fire, x, y):
     self.rgb = (0,0,0)
-    self.fire = fire;
+    self.fire = fire
     self.y = y
     self.x = x
     self.rnderp = id(self) % 9
@@ -167,7 +167,7 @@ class Particle:
     color = heat - progress
     if ( color < 0 ):
         color = 0
-    
+
     r = 5 + color * 2
     if ( r > 255 ):
         r = 255
@@ -190,7 +190,7 @@ class Particle:
       r = b
       b = temp
     elif ( self.palette == 2 ):
-      # yellow green GRB     
+      # yellow green GRB
       temp = r
       r = g
       g = temp
@@ -211,7 +211,7 @@ class Particle:
       r = b
       b = g
       g = temp
-        
+
     self.rgb = ( r, g, b )
     self.y -= self.speed
 
@@ -219,7 +219,7 @@ class Particle:
     inty = int(self.y)
 
     self.intoarray(intx, inty, self.rgb)
-    
+
     # Reset if particle is done
     if (self.fire.strip2D.leny - self.y ) > life or self.y > self.fire.strip2D.leny:
       if (alive):
@@ -268,6 +268,6 @@ if __name__ == "__main__":
 
   client.loop_start()
 
-  sleeve = Mqtt_Fire(Strip2D(7, 21));
-  sleeve.run();
+  sleeve = Mqtt_Fire(Strip2D(7, 21))
+  sleeve.run()
 

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-import time;
-import random;
+import time
+import random
 
 import sys
 sys.path.append('../lib')
-from strip import *;
+from strip import *
 
 import os
 os.environ["SDL_VIDEODRIVER"] = "dummy"
@@ -22,8 +22,8 @@ class Marquee(Effect):
 
   def __init__(self, strip2D):
     self.text = "Hello World"
-    super(Marquee, self).__init__(strip2D);
-    self.strip2D.strip.clear();
+    super(Marquee, self).__init__(strip2D)
+    self.strip2D.strip.clear()
 
   def run(self, runtime = None):
     if ( runtime == None ):
@@ -32,7 +32,7 @@ class Marquee(Effect):
          elif ( hasattr( sys, "maxsize" ) ): # Python 3
             runtime = sys.maxsize
       
-    self.strip2D.strip.clear();
+    self.strip2D.strip.clear()
     
     self.text = " ".join(self.text[i:i+1] for i in range(0, len(self.text), 1))
     text = font.render( self.text, False, color)
@@ -43,11 +43,11 @@ class Marquee(Effect):
         
     pygame.display.flip()
 
-    now = time.time();
+    now = time.time()
     
     offset = 0
     while (not self.quit) and ((time.time() - now) < runtime):
-      time.sleep(0.1);
+      time.sleep(0.1)
       
       for y in range(self.strip2D.leny):
         for x in range(self.strip2D.lenx):
@@ -58,9 +58,9 @@ class Marquee(Effect):
       if ( offset > screen.get_width() - 7 ):
         offset = 0
       
-      self.strip2D.send();
+      self.strip2D.send()
 
-    self.quit = False;
+    self.quit = False
 
 """
 ./marquee.py "Hello world" addr=192.168.1.255
@@ -70,9 +70,9 @@ class Marquee(Effect):
 
 if __name__ == "__main__":
   print( sys.argv )
-  e = Marquee(Strip2D(7, 21));
+  e = Marquee(Strip2D(7, 21))
   if (len(sys.argv) > 2):
     e.text = sys.argv[1]
-  e.run();
+  e.run()
 
 
