@@ -85,7 +85,7 @@ def manage():
     # Run random sequence of effects
     count = random.randint(0, len(effects) - 1)
     effects[cnt][0].quit = True
-    while not dowait:
+    while dowait:
       time.sleep(0.1)
     dowait = True
 
