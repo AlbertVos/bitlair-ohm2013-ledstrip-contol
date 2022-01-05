@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 
-import time
 import random
 
 import sys
 sys.path.append('../lib')
-from strip import *
+from strip import Effect, Strip2D
 
 
 class Color:
@@ -29,8 +28,8 @@ class Color:
 
   def colorFade(self, f):
     c = self.getColor()
-    for i in range(len(c)):
-      c[i] = int(c[i] * f)
+    for i, color in enumerate(c):
+      c[i] = int(color * f)
     return c
 
 """
@@ -47,7 +46,7 @@ class Stars1(Effect):
     if (count % 5) != 0:
       return
     self.strip2D.strip.fade(.8)
-    for i in range(1):
+    for _i in range(1):
       self.strip2D.set(random.randint(0, 6), random.randint(0, 20) \
         , self.color.getColor())
 
@@ -112,13 +111,13 @@ class Stars3(Effect):
     if (count % 4) != 0:
       return
     self.strip2D.strip.clear([0, 0, 2])
-    for i in range(len(self.stars)):
-      if self.stars[i][2] <= 0:
-        self.stars[i] = [random.randint(0, 6), random.randint(0, 20) \
+    for _i, stars in enumerate(self.stars):
+      if stars[2] <= 0:
+        stars = [random.randint(0, 6), random.randint(0, 20) \
           , self.life / 2]
-        s = self.stars[i]
+        s = stars
       else:
-        s = self.stars[i]
+        s = stars
         s[2] -= 1
       self.strip2D.set(s[0], s[1], self.color.colorFade( \
         float(s[2]) / float(self.life)))
@@ -127,5 +126,3 @@ class Stars3(Effect):
 if __name__ == "__main__":
   e = Stars3(Strip2D(7, 21))
   e.run()
-
-

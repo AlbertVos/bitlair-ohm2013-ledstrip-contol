@@ -7,24 +7,25 @@ import math
 
 import sys
 sys.path.append('../lib')
-from strip import *
+from strip import Effect, Strip2D
 
 # Conrad's game of life
 
 class Life(Effect):
-  
+
   def __init__(self, strip2D):
     super(Life, self).__init__(strip2D)
     self.strip2D.strip.clear()
     self.strip2D.send()
     self.reset()
+    self.plane = None
 
   def step(self, count):
     self.strip2D.strip.clear([0, 0, 0])
     #if (count % 200) == 0:
     #  self.reset()
     if (count % 20) == 0:
-      for i in range(int(20 / (math.log(self.getCount() + 1) + 1))):
+      for _i in range(int(20 / (math.log(self.getCount() + 1) + 1))):
         self.plane[random.randint(0, 6)][random.randint(0, 20)] = 1
     else:
       self.updatePlane()
@@ -34,7 +35,7 @@ class Life(Effect):
 
   def reset(self):
     self.plane = [[0 for y in range(21)] for x in range(7)]
-    for i in range(30):
+    for _i in range(30):
       self.plane[random.randint(0, 6)][random.randint(0, 20)] = 1
 
   def updatePlane(self):
@@ -48,11 +49,15 @@ class Life(Effect):
               pass
             else:
               xx = x + dx
-              if xx < 0: xx += 7
-              if xx >= 7: xx -= 7
+              if xx < 0:
+                xx += 7
+              if xx >= 7:
+                xx -= 7
               yy = y + dy
-              if yy < 0: yy += 21
-              if yy >= 21: yy -= 21
+              if yy < 0:
+                yy += 21
+              if yy >= 21:
+                yy -= 21
               if self.plane[xx][yy] == 1:
                 count += 1
         if self.plane[x][y] == 0:
@@ -79,7 +84,8 @@ class Life(Effect):
     c = 0
     for y in range(21):
       for x in range(7):
-        if self.plane[x][y] == 1: c += 1
+        if self.plane[x][y] == 1:
+          c += 1
     return c
 
 
@@ -123,5 +129,3 @@ def rainbow(count):
 if __name__ == "__main__":
   e = Life(Strip2D(7, 21))
   e.run()
-
-

@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
-import sys
-sys.path.append('./lib')
-from strip import *
 import time
 import random
+import sys
+sys.path.append('./lib')
+from strip import Strip, Strip2D, Canvas, Artnet
 
 
 def test1():
@@ -41,36 +41,36 @@ def test2(count):
   strip2D = Strip2D(lenx, leny)
   strip = strip2D.strip
   while count > 0:
-    
+
     strip2D.strip.clear([255, 255, 255])
     for y in range(leny):
       strip2D.set(0, y, [255, 0, 0])
     strip.artnet.send(strip2D.strip)
-    
-    for i in range(30):
+
+    for _i in range(30):
       time.sleep(0.1)
       strip2D.rotl()
       strip.artnet.send(strip2D.strip)
-    for i in range(30):
+    for _i in range(30):
       time.sleep(0.1)
       strip2D.rotr()
       strip.artnet.send(strip2D.strip)
-    
+
     strip2D.strip.clear([255, 255, 255])
     for x in range(lenx):
       strip2D.set(x, 0, [255, 0, 0])
     strip.artnet.send(strip2D.strip)
-    
-    for i in range(40):
+
+    for _i in range(40):
       time.sleep(0.1)
       strip2D.rotu()
       strip.artnet.send(strip2D.strip)
-    for i in range(40):
+    for _i in range(40):
       time.sleep(0.1)
       strip2D.rotd()
       strip.artnet.send(strip2D.strip)
     count -= 1
-    
+
     strip2D.strip.clear([255, 255, 255])
     for x in range(lenx):
       strip2D.set(x, 0, [255, 0, 0])
@@ -78,14 +78,14 @@ def test2(count):
     for y in range(leny):
       strip2D.set(0, y, [255, 0, 0])
     strip.artnet.send(strip2D.strip)
-    
-    for i in range(40):
+
+    for _i in range(40):
       time.sleep(0.1)
       strip2D.rotu()
       strip2D.rotr()
       strip.artnet.send(strip2D.strip)
     count -= 1
-    
+
   strip.artnet.close()
 
 
@@ -107,19 +107,19 @@ def test3(count):
     strip2D.set((y + 6) % lenx, y, [0, 0, 255])
   strip.artnet.send(strip2D.strip)
   while count > 0:
-    for i in range(30):
+    for _i in range(30):
       time.sleep(0.1)
       strip2D.rotl()
       strip.artnet.send(strip2D.strip)
-    for i in range(30):
+    for _i in range(30):
       time.sleep(0.1)
       strip2D.rotr()
       strip.artnet.send(strip2D.strip)
-    for i in range(30):
+    for _i in range(30):
       time.sleep(0.1)
       strip2D.rotu()
       strip.artnet.send(strip2D.strip)
-    for i in range(30):
+    for _i in range(30):
       time.sleep(0.1)
       strip2D.rotd()
       strip.artnet.send(strip2D.strip)
@@ -187,7 +187,7 @@ def testFade(count):
   while count > 0:
     strip.clear([255, 0, 255])
     strip.send()
-    for i in range(10):
+    for _i in range(10):
       time.sleep(1)
       strip.fade(0.6)
       strip.send()
@@ -202,7 +202,8 @@ def discover(count):
 
   artnet = Artnet()
   while count > 0:
-    artnet.discover()
+    if "discover" in dir(artnet):
+      artnet.discover() # pylint: disable=no-member
     count -= 1
 
   artnet.close()
@@ -220,5 +221,3 @@ test2(3)
 #test4(30)
 #test5(40)
 #testFade(4)
-
-

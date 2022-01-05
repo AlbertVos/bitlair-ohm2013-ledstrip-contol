@@ -18,16 +18,12 @@ import time
 import signal
 import sys
 import select
-import threading
 import os
-import random
-import math
-
 
 # Signal handler to kill the application
 # Usage: signal.signal(signal.SIGINT, signal_handler)
 
-def signal_handler(signal_, frame):
+def signal_handler(_signal, _frame):
   #print('Bye ...')
   strip.stop()
   os.kill(os.getpid(), signal.SIGKILL)
@@ -35,12 +31,12 @@ def signal_handler(signal_, frame):
 
 # Convert string to array of tupples
 # Parameter s can be:
-#   abcdef 
-#   'abcdef' 
-#   "abcdef" 
+#   abcdef
+#   'abcdef'
+#   "abcdef"
 #   ("abcdef", 123)
-#   [("abcdef", 123)] 
-   
+#   [("abcdef", 123)]
+
 def toTuppleArray(s):
   if ((s[0] == '"') or (s[0] == "'")):
     s = "[(" + s + ")]"
@@ -50,13 +46,13 @@ def toTuppleArray(s):
     s = "[" + s + "]"
   else:
     pass
-  r = eval(s)
-  return eval(s)
+  #r = eval(s)
+  return eval(s) # pylint: disable=eval-used
 
 
-def getAddr(addr = []):
+def getAddr(addr = None):
   defaultPort = 6454
-  if len(addr) > 0:
+  if addr and len(addr) > 0:
     pass
   else:
     # Check if addr= argument given or ADDR env. variable set
@@ -69,9 +65,9 @@ def getAddr(addr = []):
     else:
       addr = [("192.168.89.255", 6454)]
   # check for missing port and set to default
-  for i in range(len(addr)):
-    if len(addr[i]) == 1:
-      addr[i] = (addr[i][0], defaultPort)
+  for i, address in enumerate(addr):
+    if len(address) == 1:
+      addr[i] = (address[0], defaultPort)
   #print( "Addresses used:", addr )
   return addr
 
@@ -88,16 +84,16 @@ class Artnet:
   fade = 1.0
   length = 170
 
-  #                       01234567   8   9   a   b   c   d   e   f   10  11  
-  #                                  op-code protver seq phy universe len  
+  #                       01234567   8   9   a   b   c   d   e   f   10  11
+  #                                  op-code protver seq phy universe len
   dataHeader = bytearray( b"Art-Net\x00\x00\x50\x00\x0e\x00\x00\x00\x00\x02\x00" )
   #                    01234567   8   9   a   b   c   d
-  #                               op-code protver 
+  #                               op-code protver
   pollMsg = bytearray( b"Art-Net\x00\x00\x20\x00\x0e\x00\xff" )
 
-  def __init__(self, addr_ = []):
+  def __init__(self, addr = None):
 
-    self.addr = getAddr(addr_)
+    self.addr = getAddr(addr)
 
     if "FADE" in os.environ:
       self.fade = float(os.environ.get('FADE'))
@@ -135,28 +131,28 @@ class Artnet:
   # Clear the entire strip
   def clear(self):
     data = self.dataHeader
-    for i in range(self.length):
+    for _i in range(self.length):
       data += b"\x00\x00\x00"
-    for i in range(len(self.addr)):
-      self.sock.sendto( data, self.addr[i])
+    for _i, address in enumerate(self.addr):
+      self.sock.sendto( data, address)
 
   # Send the data of a strip
-  def send(self, strip):
-    data = bytearray(3*strip.length)
-    for i in reversed(range(strip.length)):
-      c = strip.get(strip.length - i)
+  def send(self, current_strip):
+    data = bytearray(3*current_strip.length)
+    for i in reversed(range(current_strip.length)):
+      c = current_strip.get(current_strip.length - i)
       data[3*i+0] = int( c[0] * self.fade )
       data[3*i+1] = int( c[1] * self.fade )
       data[3*i+2] = int( c[2] * self.fade )
-    for i in range(len(self.addr)):      
-      self.sock.sendto( self.dataHeader + data, self.addr[i])
+    for _i, address in enumerate(self.addr):
+      self.sock.sendto( self.dataHeader + data, address)
 
   # Run poll for 5 seconds.
   def poll(self):
     devices = []
     self.sock.setblocking(0)
-    for i in range(len(self.addr)):
-      self.sock.sendto(self.pollMsg, self.addr[i])
+    for _i, address in enumerate(self.addr):
+      self.sock.sendto(self.pollMsg, address)
     print( "=== Sent artnet poll ===" )
     now = time.time()
     while (time.time() - now) < 5:
@@ -175,17 +171,18 @@ class Artnet:
 #
 # The Strip class defines operations for a 1-dimensional string of leds.
 #
+strip = None
 
 class Strip:
   length = 0
   rgb = []
 
   # Constructor, creating a strip of length leds.
-  def __init__(self, length, addr = []):
+  def __init__(self, length, addr = None):
     self.length = length
     self.clear()
     self.artnet = Artnet(addr)
-    
+
     signal.signal(signal.SIGINT, signal_handler)
 
     global strip
@@ -194,17 +191,20 @@ class Strip:
   # Stop this strip
   def stop(self):
     if "globalStop" in dir(strip):
-      self.globalStop(self)
+      self.globalStop(self) # pylint: disable=no-member
     self.artnet.close()
 
   # Send the data of myself to the strip
   def send(self):
     self.artnet.send(self)
-    
+
   # Clear the entire strip with one color (default: black).
   # Color is array: [r, g, b].
-  def clear(self, color = [0, 0, 0]):
-    [r, g, b] = color
+  def clear(self, color = None):
+    if color and len(color):
+      [r, g, b] = color
+    else:
+      [r, g, b] = [0, 0, 0]
     self.rgb = [[r, g, b] for x in range(self.length)]
 
   # Set led at index to color.
@@ -218,9 +218,12 @@ class Strip:
           r = int(alpha * r + (1 - alpha) * c[0])
           g = int(alpha * g + (1 - alpha) * c[1])
           b = int(alpha * b + (1 - alpha) * c[2])
-          if r > 255: r = 255
-          if g > 255: g = 255
-          if b > 255: b = 255
+          if r > 255:
+            r = 255
+          if g > 255:
+            g = 255
+          if b > 255:
+            b = 255
       self.rgb[self.length - 1 - index] = [r, g, b]
 
   # Get color of led at index.
@@ -268,10 +271,10 @@ class Strip2D:
   lenx = 0
   leny = 0
   fadeCount = 0
-  global strip
+  strip = None
 
   # Constructor, defining a led banner of width lenx and height leny.
-  def __init__(self, lenx, leny, addr = []):
+  def __init__(self, lenx, leny, addr = None):
     self.lenx = lenx
     self.leny = leny
     #self.strip = Strip(lenx * leny, addr)
@@ -327,7 +330,7 @@ class Strip2D:
 
   # Set pattern for every y increment with step.
   def pattern(self, data, step):
-    length = len(data)
+    #length = len(data)
     for y in range(self.leny):
       for x in range(self.lenx):
         self.set(x, y, data[(x + y * step) % self.lenx])
@@ -351,10 +354,10 @@ class Strip2D:
       for x in range(self.lenx):
         c = self.get(x, y)
         c = [int(c[0] * f), int(c[1] * f), int(c[2] * f)]
-      
+
         self.set(x, y, c)
         self.set(x, y, c)
-    
+
 
 
 #
@@ -364,7 +367,7 @@ class Strip2D:
 class Canvas:
   lenx = 0
   leny = 0
-  strip2D = 0; 
+  strip2D = 0
 
   def __init__(self, lenx, leny):
     self.lenx = lenx
@@ -377,9 +380,9 @@ class Canvas:
     y = radius
     p = (5 - radius * 4) / 4
     self.circlePoints(cx, cy, x, y, color)
-    while (x < y):
+    while x < y:
       x += 1
-      if (p < 0):
+      if p < 0:
         p += 2 * x + 1
       else:
         y -= 1
@@ -388,17 +391,17 @@ class Canvas:
 
   # used by circle; do not use
   def circlePoints(self, cx, cy, x, y, c):
-    if (x == 0):
+    if x == 0:
       self.strip2D.set(cx, cy + y, c)
       self.strip2D.set(cx, cy - y, c)
       self.strip2D.set(cx + y, cy, c)
       self.strip2D.set(cx - y, cy, c)
-    elif (x == y):
+    elif x == y:
       self.strip2D.set(cx + x, cy + y, c)
       self.strip2D.set(cx - x, cy + y, c)
       self.strip2D.set(cx + x, cy - y, c)
       self.strip2D.set(cx - x, cy - y, c)
-    elif (x < y):
+    elif x < y:
       self.strip2D.set(cx + x, cy + y, c)
       self.strip2D.set(cx - x, cy + y, c)
       self.strip2D.set(cx + x, cy - y, c)
@@ -419,15 +422,15 @@ class Effect(object):
   """
     You can either override the run method or the step method.
     If you override the run method you have to do everything yourself.
-    The step method is called repeatedly with a sleep of .02 
+    The step method is called repeatedly with a sleep of .02
     in between; the strip send method is called automatically.
   """
   def run(self, runtime = None ):
-    if ( runtime == None ):
-         if ( hasattr( sys, "maxint" ) ):
-            runtime = sys.maxint
-         elif ( hasattr( sys, "maxsize" ) ):
-            runtime = sys.maxsize
+    if runtime is None:
+      if hasattr( sys, "maxint" ): # Python 2
+        runtime = sys.maxint
+      elif hasattr( sys, "maxsize" ): # Python 3
+        runtime = sys.maxsize
 
     self.strip2D.strip.clear([0, 0, 0])
     self.strip2D.send()
@@ -436,12 +439,12 @@ class Effect(object):
     now = time.time()
     self.init()
     while (not self.quit) and ((time.time() - now) < runtime):
-      self.step(self.count); 
+      self.step(self.count)
       self.count += 1
       self.strip2D.send()
       time.sleep(0.02)
 
-  """ 
+  """
     init is called be a new sequence of steps is executed to reinitialize.
   """
   def init(self):
@@ -461,5 +464,3 @@ opcode  ip  .   .   .   port.   version
 
 
 """
-
-

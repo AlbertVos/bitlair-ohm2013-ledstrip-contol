@@ -5,7 +5,7 @@ import math
 
 import sys
 sys.path.append('../lib')
-from strip import *
+from strip import Strip
 
 period = 1800
 period13 = period / 3
@@ -64,6 +64,3 @@ while True:
   if count >= period:
     count -= period
   time.sleep(.1)
-
-
-

@@ -9,7 +9,7 @@ export 'ADDR=[("192.168.94.2", 8000), ("192.168.94.2", 8001),("192.168.94.2", 80
 
 cd data/python/ohm2013/strip/
 export 'ADDR=[("192.168.1.108", 6454), ("192.168.1.109", 6454)]'
-./proxy.py 
+./proxy.py
 
 ./fire.py 'addr=[("localhost", 8000)]'
 ./fire.py 'addr=[("localhost", 8001)]'
@@ -19,25 +19,27 @@ export 'ADDR=[("192.168.1.108", 6454), ("192.168.1.109", 6454)]'
 """
 
 import socket
-import time
 import signal
 import sys
 sys.path.append('../lib')
 import select
-import threading
 import os
-import random
-import math
 from strip import getAddr
 
+try:
+  # Python 2
+  xrange
+except NameError:
+  # Python 3, xrange is now named range
+  xrange = range
 
 def hexdump(s):
-    for b in xrange(0, len(s), 16):
-        lin = [c for c in s[b : b + 16]]
-        hxdat = ' '.join('%02X' % ord(c) for c in lin)
-        pdat = ''.join((c if 32 <= ord(c) <= 126 else '.' )for c in lin)
-        print( '  %04x: %-48s %s' % (b, hxdat, pdat) )
-    print()
+  for b in xrange(0, len(s), 16):
+    lin = [c for c in s[b : b + 16]]
+    hxdat = ' '.join('%02X' % ord(c) for c in lin) # pylint: disable=consider-using-f-string
+    pdat = ''.join((c if 32 <= ord(c) <= 126 else '.' )for c in lin)
+    print( '  %04x: %-48s %s' % (b, hxdat, pdat) ) # pylint: disable=consider-using-f-string
+  print()
 
 
 class Proxy:
@@ -49,13 +51,13 @@ class Proxy:
   socksSrc = []
   socksAddr = []
 
-  def __init__(self, addr_ = []):
+  def __init__(self, addr_ = None):
     self.addr = getAddr(addr_)
 
-    for i in range(len(self.addr)):
+    for i, address in enumerate(self.addr):
       # Convert hostname to ip address so when can compare it with address
       # data is received from.
-      self.addr[i] = (socket.gethostbyname(self.addr[i][0]), self.addr[i][1])
+      self.addr[i] = (socket.gethostbyname(address[0]), address[1])
 
       sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
       sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -64,10 +66,10 @@ class Proxy:
       self.socks.append(sock)
       self.socksSrc.append(())
       self.socksAddr.append((self.localHost, self.localPort + i))
-      print( "Channel ", self.socksAddr[i], " to ", self.addr[i] )
+      print( "Channel ", self.socksAddr[i], " to ", address )
 
     # Add broadcast address to the lists
-    
+
     # Local broadcast port
     broadcastAddr = (self.localHost, self.broadcastPort)
     # Address to broadcast to
@@ -94,8 +96,8 @@ class Proxy:
       index = -1
       for i in range(len(ready[0])):
         s = ready[0][i]
-        for j in range(len(self.socks)):
-          if s == self.socks[j]:
+        for j, socks in enumerate(self.socks):
+          if s == socks:
             index = j
             break
         if index >= 0:
@@ -104,7 +106,7 @@ class Proxy:
           #  " to ", self.addr[index], " len=", len(rdata)
           #hexdump(rdata)
 
-          # If address of received data is not the target address store it 
+          # If address of received data is not the target address store it
           # as the source address.
           #if (len(self.socksSrc[index]) == 0) and (raddr != self.addr[index]):
           #  self.socksSrc[index] = raddr
@@ -121,7 +123,7 @@ class Proxy:
             print( "Unknown address", raddr )
 
 
-def signal_handler(signal_, frame):
+def signal_handler(_signal, _frame):
   os.kill(os.getpid(), signal.SIGKILL)
   sys.exit(0)
 
@@ -129,5 +131,3 @@ if __name__ == "__main__":
   signal.signal(signal.SIGINT, signal_handler)
   p = Proxy()
   p.run()
-
-

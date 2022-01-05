@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
 
-import time
 import random
 
 import sys
 sys.path.append('../lib')
-from strip import *
+from strip import Effect, Strip2D
 
 
 class Particle():
-  def __init__(self, matrix, level):
+  def __init__(self, _matrix, level):
     if level == 0:
       self.x = random.randint(0, 6)
       self.y = 21
@@ -44,8 +43,8 @@ class Matrix(Effect):
     super(Matrix, self).__init__(strip2D)
     self.strip2D.strip.clear([0, self.bgcolor, 0])
     self.strip2D.send()
-    for level in range(len(self.numParticles)):
-      for i in range(self.numParticles[level]):
+    for level, numParticle in enumerate(self.numParticles):
+      for _i in range(numParticle):
         p = Particle(self, level)
         p.y = random.randint(0, 20)
         self.particles[level].append(p)
@@ -53,8 +52,8 @@ class Matrix(Effect):
   def step(self, count):
     self.strip2D.strip.clear([0, self.bgcolor, 0])
 
-    for level in range(len(self.numParticles)):
-      for i in range(self.numParticles[level]):
+    for level, particles in enumerate(self.numParticles):
+      for i in range(particles):
         p = self.particles[level][i]
         if p.y <= -p.len:
           p = Particle(self, level)
@@ -75,5 +74,3 @@ class Matrix(Effect):
 if __name__ == "__main__":
   e = Matrix(Strip2D(7, 21))
   e.run()
-
-

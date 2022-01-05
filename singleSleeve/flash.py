@@ -4,7 +4,7 @@ import time
 
 import sys
 sys.path.append('../lib')
-from strip import *
+from strip import Effect, Strip2D
 
 # Orange flasher
 
@@ -26,5 +26,3 @@ class Flash(Effect):
 if __name__ == "__main__":
   e = Flash(Strip2D(7, 21))
   e.run()
-
-

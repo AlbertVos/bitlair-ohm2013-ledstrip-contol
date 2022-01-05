@@ -16,6 +16,8 @@ sys.path.append('../lib')
 import os
 from strip import Artnet
 
+artnet = None
+
 def poll():
   global artnet
   artnet = Artnet()
@@ -24,12 +26,10 @@ def poll():
     artnet.poll()
     time.sleep(1.0)
 
-def signal_handler(signal_, frame):
+def signal_handler(_signal, _frame):
   artnet.close()
   os.kill(os.getpid(), signal.SIGKILL)
   sys.exit(0)
 
 signal.signal(signal.SIGINT, signal_handler)
 poll()
-
-

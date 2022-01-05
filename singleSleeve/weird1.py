@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
 
-import time
-import random
-
 import sys
 sys.path.append('../lib')
-from strip import *
+from strip import Effect, Strip2D
 
 
 class Weird1(Effect):
@@ -43,14 +40,12 @@ class Weird1(Effect):
           self.strip2D.set(x, y, self.bg1)
         else:
           self.strip2D.set(x, y, self.bg2)
-      
+
     for x in range(7):
       self.strip2D.set(x, 10 + self.fgCount, self.fg)
       self.strip2D.set(x, 10 - self.fgCount, self.fg)
-        
+
 
 if __name__ == "__main__":
   e = Weird1(Strip2D(7, 21))
   e.run()
-
-

@@ -2,20 +2,16 @@
 
 """
 Start one window listening at port 7000
-  ./simstrip.py 
-Start 2 window listening at port 7000 and 7001 
+  ./simstrip.py
+Start 2 window listening at port 7000 and 7001
   ./simstrip.py 2 port=7000
 """
 
-import math
 import os
-import random
 import select
-import signal
 import socket
 import subprocess
 import sys
-import threading
 import time
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 import pygame
@@ -76,7 +72,7 @@ class SimStrip:
           #print "received data from", addr[0], "@", addr[1], len(rdata)
 
           # draw pixels
-          l = len(rdata) - 18
+          #l = len(rdata) - 18
           for i in range(0, 7 * 21):
             x = 6 - (i % 7)
             y = int(i / 7)
@@ -90,7 +86,7 @@ class SimStrip:
     self.sock.setblocking(1)
 
   def hexdump(self, data):
-    print( ":".join("{:02x}".format(ord(c)) for c in data) )
+    print( ":".join("{:02x}".format(ord(c)) for c in data) ) # pylint: disable=consider-using-f-string
 
 class Screen:
   def __init__(self, title):
@@ -107,7 +103,7 @@ class Screen:
 
   def processEvents(self):
     for event in pygame.event.get():
-      if event.type == pygame.QUIT: 
+      if event.type == pygame.QUIT:
         sys.exit()
 
   def updateScreen(self):
@@ -130,7 +126,7 @@ def start(port, num):
   for i in range(num):
     pos_x = 100 + 100 * i
     pos_y = 100
-    os.environ['SDL_VIDEO_WINDOW_POS'] = '%i,%i' % (pos_x,pos_y)
+    os.environ['SDL_VIDEO_WINDOW_POS'] = '%i,%i' % (pos_x,pos_y) # pylint: disable=consider-using-f-string
     os.environ['SDL_VIDEO_CENTERED'] = '0'
     subprocess.Popen(["python3", "simstrip.py", str(port + i), "-"])
     time.sleep(0.3)
@@ -159,5 +155,3 @@ if __name__ == "__main__":
     run(port)
   else:
     start(portDefault, num)
-
-

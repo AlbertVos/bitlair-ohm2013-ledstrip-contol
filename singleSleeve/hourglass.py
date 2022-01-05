@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 
-import time
 import random
 
 import sys
 sys.path.append('../lib')
-from strip import *
+from strip import Effect, Strip2D
 
 
 class Hourglass(Effect):
@@ -26,7 +25,7 @@ class Hourglass(Effect):
 
   def init(self):
     for i in range(0, self.numlayer):
-      for j in range(self.numpart // self.numlayer):
+      for _j in range(self.numpart // self.numlayer):
         self.top.append([random.randint(0, 6), i, i])
     self.active = []
     self.bottom = []
@@ -39,7 +38,7 @@ class Hourglass(Effect):
       self.init()
       self.initcnt = -1
       return
-    elif self.initcnt > 0: 
+    elif self.initcnt > 0:
       self.initcnt -= 1
       for i in range(self.numlayer):
         for j in range(7):
@@ -47,30 +46,30 @@ class Hourglass(Effect):
       return
 
     # check for end
-    if ((len(self.top) == 0) and (len(self.active) == 0)):
+    if (len(self.top) == 0) and (len(self.active) == 0):
       self.initcnt = 21 - self.numlayer
       self.initcnt *= 3
 
     # drop next one
-    if ((len(self.top) > 0) and (count % 9 == 0)):
+    if (len(self.top) > 0) and (count % 9 == 0):
       p = self.top.pop()
       p[1] = 20 - (self.numlayer - 1 - p[1])
       self.active.insert(0, p)
-    
+
     for i in reversed(range(len(self.active))):
       self.active[i][2] += 1
-      if (self.active[i][2] >= self.active[i][1]):
+      if self.active[i][2] >= self.active[i][1]:
         p = self.active.pop(i)
         self.bottom.append(p)
 
-    for i in range(len(self.top)):
-      self.strip2D.set(self.top[i][0], 20 - self.top[i][2], self.colors[1])
+    for i, top in enumerate(self.top):
+      self.strip2D.set(top[0], 20 - top[2], self.colors[1])
 
-    for i in range(len(self.bottom)):
-      self.strip2D.set(self.bottom[i][0], 20 - self.bottom[i][2], self.colors[1])
+    for i, bottom in enumerate(self.bottom):
+      self.strip2D.set(bottom[0], 20 - bottom[2], self.colors[1])
 
-    for i in range(len(self.active)):
-      self.strip2D.set(self.active[i][0], 20 - self.active[i][2], self.colors[1])
+    for i, active in enumerate(self.active):
+      self.strip2D.set(active[0], 20 - active[2], self.colors[1])
 
   def setColors(self, colors):
     self.colors = colors
@@ -79,5 +78,3 @@ class Hourglass(Effect):
 if __name__ == "__main__":
   e = Hourglass(Strip2D(7, 21))
   e.run()
-
-

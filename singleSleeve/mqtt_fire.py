@@ -1,21 +1,22 @@
 #!/usr/bin/env python3
-import paho.mqtt.client as paho
 import random
-import math
 import time
-
+import os
 import sys
-sys.path.append('../lib')
-from strip import *
+import termios
+import fcntl
 
-import termios, fcntl
+import paho.mqtt.client as paho
+sys.path.append('../lib')
+from strip import Effect, Strip2D
+
 
 # Store global reference for MQTT to alter palette
 sleeve = None
 
 broker = os.environ.get('BROKER', None)
 if not broker:
-    raise ValueError('You must have "BROKER" variable')
+  raise ValueError('You must have "BROKER" variable')
 
 class Mqtt_Fire(Effect):
   rdata = {}
@@ -43,12 +44,13 @@ class Mqtt_Fire(Effect):
       self.bdata[i] = 0
 
   def run(self, runtime = None):
-    if ( runtime == None ):
-         if ( hasattr( sys, "maxint" ) ): # Python 2
-            runtime = sys.maxint
-         elif ( hasattr( sys, "maxsize" ) ): # Python 3
-            runtime = sys.maxsize
+    if runtime is None:
+      if hasattr( sys, "maxint" ): # Python 2
+        runtime = sys.maxint
+      elif hasattr( sys, "maxsize" ): # Python 3
+        runtime = sys.maxsize
 
+    heat = None
     particles = [Particle(self, random.randint(0, self.strip2D.lenx - 1), \
       self.strip2D.leny) for each in range(self.maxparticles)]
 
@@ -64,15 +66,15 @@ class Mqtt_Fire(Effect):
     fcntl.fcntl(fd, fcntl.F_SETFL, oldflags | os.O_NONBLOCK)
 
     while (not self.quit or heat) and ((time.time() - starttime) < runtime):
-      if ( self.quit ):
-        if ( heat ):
+      if  self.quit :
+        if  heat :
           heat -= 1
-        if ( self.maxbrightness ):
+        if  self.maxbrightness :
           self.maxbrightness -= 1
-      elif (self.pcount < self.maxparticles):
+      elif self.pcount < self.maxparticles:
         heat = int( 512 * self.pcount / self.maxparticles )
 
-      if ( heat > 255 ):
+      if  heat > 255 :
         heat = 255
 
       try:
@@ -98,20 +100,21 @@ class Mqtt_Fire(Effect):
           self.quit = True
         elif c == "+" or c == "=":
           self.maxbrightness += 1
-          if ( self.maxbrightness > 255 ):
+          if  self.maxbrightness > 255 :
             self.maxbrightness = 255
         elif c == "-" or c == "_":
           self.maxbrightness -= 1
-          if ( self.maxbrightness < 1 ):
+          if  self.maxbrightness < 1 :
             self.maxbrightness = 1
         elif c == "h":
           self.pcount = self.maxparticles - 2
         elif c == "l":
           self.pcount = 20
 
-      except IOError: pass
+      except IOError:
+        pass
 
-      if ( self.restoretime and self.restoretime < time.time() ):
+      if  self.restoretime and self.restoretime < time.time() :
         self.palette = 0
         self.restoretime = 0
       for i in range(self.pcount):
@@ -120,8 +123,14 @@ class Mqtt_Fire(Effect):
         particles[i].updateparticle( 255, False )
 
       for i in range(150):
-        self.strip2D.set((149 - i) % self.strip2D.lenx, int((149 - i) / self.strip2D.lenx), \
-          [self.maxbrightness * self.rdata[i] / 255, self.maxbrightness * self.gdata[i] / 255, self.maxbrightness * self.bdata[i] / 255])
+        x = (149 - i) % self.strip2D.lenx
+        # For upside down, use:
+        #y = self.strip2D.leny - int((149 - i) / self.strip2D.lenx)
+        y = int((149 - i) / self.strip2D.lenx)
+        r = self.maxbrightness * self.rdata[i] / 255
+        g = self.maxbrightness * self.gdata[i] / 255
+        b = self.maxbrightness * self.bdata[i] / 255
+        self.strip2D.set( x, y, [ r, g, b ] )
 
       self.strip2D.send()
       self.cleanarray()
@@ -161,51 +170,51 @@ class Particle:
   def updateparticle(self, heat, alive):
     # Fire goes from white -> yellow -> deep orange
     life = heat * self.life / 255
-    if ( life < 3 ):
-        life = 3
+    if  life < 3 :
+      life = 3
     progress = int(heat * (self.fire.strip2D.leny - self.y) / life)
     color = heat - progress
-    if ( color < 0 ):
-        color = 0
+    if  color < 0 :
+      color = 0
 
     r = 5 + color * 2
-    if ( r > 255 ):
-        r = 255
+    if  r > 255 :
+      r = 255
 
     g = (color - 92) * 2
-    if ( g > 255 ):
-        g = 255
-    if ( g < 0 ):
-        g = 0
+    if  g > 255 :
+      g = 255
+    if  g < 0 :
+      g = 0
 
     b = (color - 191) * random.randint( 0, 4 )
-    if ( b > 255 ):
-        b = 255
-    if ( b < 0 ):
-        b = 0
+    if  b > 255 :
+      b = 255
+    if  b < 0 :
+      b = 0
 
-    if ( self.palette == 1 ):
+    if  self.palette == 1 :
       # turqoise blue BGR
       temp = r
       r = b
       b = temp
-    elif ( self.palette == 2 ):
+    elif  self.palette == 2 :
       # yellow green GRB
       temp = r
       r = g
       g = temp
-    elif ( self.palette == 3 ):
+    elif  self.palette == 3 :
       # pink blue GBR
       temp = r
       r = g
       g = b
       b = temp
-    elif ( self.palette == 4 ):
+    elif  self.palette == 4 :
       # purple red RBG
       temp = b
       b = g
       g = temp
-    elif ( self.palette == 5 ):
+    elif  self.palette == 5 :
       # turqoise green BRG
       temp = r
       r = b
@@ -222,8 +231,9 @@ class Particle:
 
     # Reset if particle is done
     if (self.fire.strip2D.leny - self.y ) > life or self.y > self.fire.strip2D.leny:
-      if (alive):
-        self.__init__(self.fire, random.randint( 0, self.fire.strip2D.lenx - 1 ), self.fire.strip2D.leny)
+      if alive:
+        x = random.randint( 0, self.fire.strip2D.lenx - 1 )
+        self.__init__(self.fire, x, self.fire.strip2D.leny)
       else:
         self.rgb = ( 0,0,0 )
 
@@ -233,20 +243,26 @@ class Particle:
     self.fire.bdata[y * self.fire.strip2D.lenx + x] = rgb[2]
 
 
-def on_mqtt_message( client, userdata, message ):
+def on_mqtt_message( _client, _userdata, message ):
   payload = message.payload.decode( "utf-8" )
-  topic = str( message.topic.split("/")[1] )
+  topic = str( message.topic.split("/")[2] )
   print( topic )
-  #if ( topic == "topic" ):
-  #  if ( payload == 'ON' ):
-  #    sleeve.palette = 3
-  #  if ( payload == 'OFF' ):
-  #    sleeve.palette = 0
-  #elif ( topic != "topic2" ):
-  #  if ( payload == 'ON' ):
-  #    print( "ding" )
-  #    sleeve.palette = 2
-  #    sleeve.restoretime = time.time() + 5
+  if  topic == "alley" :
+    if  payload == 'ON' :
+      sleeve.palette = 3
+    if  payload == 'OFF' :
+      sleeve.palette = 0
+  elif  topic != "office" :
+    print( "topic: ", topic )
+    if  payload == 'TOGGLE' :
+      print( "toggle" )
+    if  payload == 'ON' :
+      print( "ding" )
+      sleeve.palette = 2
+      sleeve.restoretime = time.time() + 5
+    if  payload == 'OFF' :
+      print( "dong" )
+      #e.palette = 0
 
 """
 ./fire.py addr=192.168.1.255
@@ -262,12 +278,12 @@ if __name__ == "__main__":
 
   client.connect( broker )
   # Subscribe to the door bell switch
-  #client.subscribe( "some/topic", qos = 1 )
-  #client.subscribe( "some/topic2", qos = 1 )
+  client.subscribe( "home/groundfloor/entrance/hallway/stat/POWER3", qos = 1 )
+  client.subscribe( "mancave/groundfloor/office/motion/cmnd/POWER1", qos = 1 )
+  client.subscribe( "outside/groundfloor/alley/motion/cmnd/POWER1", qos = 1 )
   time.sleep( 0.5 )
 
   client.loop_start()
 
   sleeve = Mqtt_Fire(Strip2D(7, 21))
   sleeve.run()
-

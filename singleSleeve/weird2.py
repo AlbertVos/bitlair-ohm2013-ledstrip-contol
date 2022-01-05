@@ -1,12 +1,8 @@
 #!/usr/bin/env python3
 
-import time
-import random
-import math
-
 import sys
 sys.path.append('../lib')
-from strip import *
+from strip import Effect, Strip2D
 
 period = 60
 period13 = (1 * period) / 3
@@ -37,22 +33,22 @@ def getColorValue2(count):
 
 def getColorValue3(count):
   count %= 1536
-  if (count < 256):
+  if count < 256:
     count -= 0
     return [255, 0, 255 - count]
-  if (count < 512):
+  if count < 512:
     count -= 256
     return [255, count, 0]
-  if (count < 768):
+  if count < 768:
     count -= 512
     return [255 - count, 255, 0]
-  if (count < 1024):
+  if count < 1024:
     count -= 768
     return [0, 255, count]
-  if (count < 1280):
+  if count < 1280:
     count -= 1024
     return [0, 255 - count, 255]
-  if (count < 1536):
+  if count < 1536:
     count -= 1280
     return [count, 0, 255]
 
@@ -78,11 +74,11 @@ class Weird2(Effect):
     for i in range(11):
       #c = rainbow((count - i) % period)
       c = rainbow(count)
-      
+
       for x in range(7):
         self.strip2D.set(x, 10 + i, c)
         self.strip2D.set(x, 10 - i, c)
-        
+
     self.strip2D.coneFade(10)
     #self.strip2D.fade(.5)
     self.strip2D.send()
@@ -90,5 +86,3 @@ class Weird2(Effect):
 if __name__ == "__main__":
   e = Weird2(Strip2D(7, 21))
   e.run()
-
-

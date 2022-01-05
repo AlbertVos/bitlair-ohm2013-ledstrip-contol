@@ -4,7 +4,7 @@ import time
 import sys
 import math
 sys.path.append('../lib')
-from strip import *
+from strip import Strip2D, getAddr
 
 
 lenx = 7
@@ -16,15 +16,15 @@ def globalStop(self):
   #print "globalStop"
   clock.quit = True
   time.sleep(.2)
-  for i in range(len(addr)):
-    self.artnet.addr = [addr[i]]
+  for _i, address in enumerate(addr):
+    self.artnet.addr = [address]
     self.clear()
     self.send()
 
 class Clock1:
   count = 0
   quit = False
-  
+
   def __init__(self, strip2D):
     self.strip2D = strip2D
 
@@ -76,7 +76,7 @@ class Clock1:
 class Clock2:
   count = 0
   quit = False
-  
+
   def __init__(self, strip2D):
     self.strip2D = strip2D
 
@@ -127,5 +127,3 @@ if __name__ == "__main__":
   s.strip.globalStop = globalStop
   clock = Clock1(s)
   clock.run()
-
-

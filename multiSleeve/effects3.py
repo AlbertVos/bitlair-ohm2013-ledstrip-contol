@@ -3,8 +3,10 @@
 import time
 
 import sys
+import os
+import signal
 sys.path.append('../lib')
-from strip import *
+from strip import Strip2D, getAddr
 
 
 lenx = 7
@@ -23,17 +25,17 @@ colors = [
 strips = []
 addr = getAddr()
 
-def signal_handler(signal_, frame):
+def signal_handler(_signal, _frame):
   #print('Stopping, bye ...')
   stop()
   os.kill(os.getpid(), signal.SIGKILL)
   sys.exit(0)
 
 def stop():
-  for i in range(len(strips)):
-    strips[i].strip.clear()
-    strips[i].strip.send()
-    strips[i].strip.stop()
+  for _i, strip in range(len(strips)):
+    strip.strip.clear()
+    strip.strip.send()
+    strip.strip.stop()
 
 #strip2D.strip.globalStop = globalStop
 
@@ -42,9 +44,9 @@ def fillThird(strip, index, color):
     for x in range(7):
       strip.set(x, y + index * 7, color)
 
-for i in range(len(addr)):
+for _i, address in enumerate(addr):
   s = Strip2D(lenx, leny)
-  s.strip.artnet.addr = [addr[i]]
+  s.strip.artnet.addr = [address]
   strips.append(s)
 
 # Set signal handler after strips are created to override handler.
@@ -78,5 +80,3 @@ while True:
     s.send()
   colorCount += 1
   time.sleep(0.1)
-
-

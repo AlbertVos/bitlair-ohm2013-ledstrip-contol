@@ -2,31 +2,32 @@
 
 import time
 import threading
+import random
 
 import sys
 sys.path.append('lib')
-from strip import *
+from strip import Strip2D, getAddr
 
 sys.path.append('singleSleeve')
-from bump import *
-from cmorph import *
-from fade import *
-from fire import *
-from fire2 import *
-from hourglass import *
-from lemmings import *
-from plasma import *
-from police import *
-from rainbow import *
-from stars import *
-from night import *
-from matrix import *
-from power import *
-from weird1 import *
-from weird2 import *
-from weird3 import *
-from flash import *
-from lighthouse import *
+from bump import Bump1
+from cmorph import CMorph
+from fade import Fade1, Fade2
+from fire import Fire
+from fire2 import Fire2
+from hourglass import Hourglass
+from lemmings import Lemmings1
+from plasma import Plasma
+from police import Police1, Police2, Police3
+from rainbow import Rainbow
+from stars import Stars1, Stars2
+from night import Night
+from matrix import Matrix
+from power import Power
+from weird1 import Weird1
+from weird2 import Weird2
+from weird3 import Weird3
+from flash import Flash
+from lighthouse import Lighthouse
 
 
 lenx = 7
@@ -84,7 +85,7 @@ def manage():
     # Run random sequence of effects
     count = random.randint(0, len(effects) - 1)
     effects[cnt][0].quit = True
-    while dowait == True:
+    while not dowait:
       time.sleep(0.1)
     dowait = True
 
@@ -97,7 +98,7 @@ addr = getAddr()
 strip2D.strip.artnet.addr = addr
 
 while True:
-  # Print effect name 
+  # Print effect name
   #print( "---", type(effects[count][0]).__name__, "---" )
 
   #effects[count][0].run(effects[count][1] * 10)
@@ -108,7 +109,5 @@ while True:
     time.sleep(0.05)
   #strip2D.strip.artnet.clear()
   dowait = False
-  while dowait == False:
+  while not dowait:
     time.sleep(0.1)
-
-

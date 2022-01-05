@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
 import sys
+import math
 sys.path.append('../lib')
-from strip import *
+from strip import Effect, Strip2D
 
 
 class Power(Effect):
@@ -25,12 +26,12 @@ class Power(Effect):
 
   def getColor(self, i):
     x = 255 * i / 144
-    if x < 0: x = 0
-    if x > 255: x = 255
+    if x < 0:
+      x = 0
+    if x > 255:
+      x = 255
     return [x, 255 - x, 0]
 
 if __name__ == "__main__":
   e = Power(Strip2D(7, 21))
   e.run()
-
-

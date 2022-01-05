@@ -4,7 +4,7 @@ import time
 
 import sys
 sys.path.append('../lib')
-from strip import *
+from strip import Strip2D, getAddr
 
 
 lenx = 7
@@ -17,16 +17,16 @@ colors = [
 
 pixels = [
   #0              5              10             15             20
-  [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] , 
-  [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0] , 
+  [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] ,
+  [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0] ,
   [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ]
 
 
 pixels = [
   #0              5              10             15             20
-  [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0] , 
-  [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0] , 
+  [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0] ,
+  [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0] ,
   [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]
 ]
 
@@ -70,9 +70,9 @@ def getColor(count, inv):
     return [255 - c[0], 255 - c[1], 255 - c[2]]
 
 
-for i in range(len(addr)):
+for _i, address in enumerate(addr):
   s = Strip2D(lenx, leny)
-  s.strip.artnet.addr = [addr[i]]
+  s.strip.artnet.addr = [address]
   strips.append(s)
 
 count = 0
@@ -81,11 +81,9 @@ while True:
   count += 1
 
   for x in range(len(strips)):
-    for y in range(len(pixels)):
+    for y, pixel in enumerate(pixels):
       s = strips[len(strips) - 1 - x]
-      fillThird(s, y, getColor(count, pixels[y][xx + x]))
+      fillThird(s, y, getColor(count, pixel[xx + x]))
     s.fade(.25)
     s.send()
   time.sleep(0.2)
-
-

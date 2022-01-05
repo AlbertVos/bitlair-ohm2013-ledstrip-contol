@@ -5,7 +5,7 @@ import math
 
 import sys
 sys.path.append('../lib')
-from strip import *
+from strip import Effect, Strip2D
 
 class Plasma(Effect):
 
@@ -22,13 +22,13 @@ class Plasma(Effect):
     self.strip2D.strip.clear()
     self.color = self.color1
     self.num_col = self.num_col1
-  
+
   def run(self, runtime = None):
-    if ( runtime == None ):
-         if ( hasattr( sys, "maxint" ) ): # Python 2
-            runtime = sys.maxint
-         elif ( hasattr( sys, "maxsize" ) ): # Python 3
-            runtime = sys.maxsize
+    if runtime is None:
+      if hasattr( sys, "maxint" ): # Python 2
+        runtime = sys.maxint
+      elif hasattr( sys, "maxsize" ): # Python 3
+        runtime = sys.maxsize
     now = time.time()
     while (not self.quit) and ((time.time() - now) < runtime):
       self.draw()
@@ -57,34 +57,34 @@ class Plasma(Effect):
         self.strip2D.set(x, y, c)
 
   def color1(self, count):
-    if (count < 256):
+    if count < 256:
       count -= 0
       return [255, 128 - count / 2, 0]
-    if (count < 512):
+    if count < 512:
       count -= 256
       return [255, count, 0]
-    if (count < 768):
+    if count < 768:
       count -= 512
       return [255 - count, 255, 0]
-    if (count < 1024):
+    if count < 1024:
       count -= 768
       return [0, 255, count]
-    if (count < 1280):
+    if count < 1280:
       count -= 1024
       return [0, 255 - count, 255]
-    if (count < 1536):
+    if count < 1536:
       count -= 1280
       return [count, 0, 255]
 
 
   def color2(self, count):
-    if (count < 256):
+    if count < 256:
       count -= 0
       return [count, count / 2, 0]
-    if (count < 512):
+    if count < 512:
       count -= 256
       return [255, (255 + 2 * count) / 3, count]
-    if (count < 768):
+    if count < 768:
       count = 767 - count
       return [count, count, count]
 
@@ -96,5 +96,3 @@ class Plasma(Effect):
 if __name__ == "__main__":
   e = Plasma(Strip2D(7, 21))
   e.run()
-
-

@@ -4,7 +4,7 @@ import time
 
 import sys
 sys.path.append('../lib')
-from strip import *
+from strip import Effect, Strip2D
 
 
 class Fade1(Effect):
@@ -14,19 +14,19 @@ class Fade1(Effect):
     self.strip2D.strip.clear()
 
   def run(self, runtime = None):
-    if ( runtime == None ):
-         if ( hasattr( sys, "maxint" ) ): # Python 2
-            runtime = sys.maxint
-         elif ( hasattr( sys, "maxsize" ) ): # Python 3
-            runtime = sys.maxsize
-      
+    if runtime is None:
+      if hasattr( sys, "maxint" ): # Python 2
+        runtime = sys.maxint
+      elif hasattr( sys, "maxsize" ): # Python 3
+        runtime = sys.maxsize
+
     self.strip2D.strip.clear([255, 255, 255])
 
     count = 0
     count2 = 0
     now = time.time()
     while (not self.quit) and ((time.time() - now) < runtime):
-      for i in range(self.strip2D.lenx):
+      for _i in range(self.strip2D.lenx):
         self.strip2D.strip.fade(.6)
         self.strip2D.rotr()
         for y in range(self.strip2D.leny):
@@ -41,22 +41,22 @@ class Fade1(Effect):
     self.quit = False
 
   def color(self, count):
-    if (count < 256):
+    if count < 256:
       count -= 0
       return [255, 0, 255 - count]
-    if (count < 512):
+    if count < 512:
       count -= 256
       return [255, count, 0]
-    if (count < 768):
+    if count < 768:
       count -= 512
       return [255 - count, 255, 0]
-    if (count < 1024):
+    if count < 1024:
       count -= 768
       return [0, 255, count]
-    if (count < 1280):
+    if count < 1280:
       count -= 1024
       return [0, 255 - count, 255]
-    if (count < 1536):
+    if count < 1536:
       count -= 1280
       return [count, 0, 255]
 
@@ -68,18 +68,18 @@ class Fade2(Effect):
     self.strip2D.strip.clear()
 
   def run(self, runtime = None):
-    if ( runtime == None ):
-         if ( hasattr( sys, "maxint" ) ): # Python 2
-            runtime = sys.maxint
-         elif ( hasattr( sys, "maxsize" ) ): # Python 3
-            runtime = sys.maxsize
-      
+    if runtime is None:
+      if hasattr( sys, "maxint" ): # Python 2
+        runtime = sys.maxint
+      elif hasattr( sys, "maxsize" ): # Python 3
+        runtime = sys.maxsize
+
     self.strip2D.strip.clear([255, 255, 255])
 
     count = 0
     now = time.time()
     while (not self.quit) and ((time.time() - now) < runtime):
-      for i in range(self.strip2D.lenx):
+      for _i in range(self.strip2D.lenx):
         self.strip2D.strip.fade(.6)
         self.strip2D.rotr()
         for y in range(self.strip2D.leny):
@@ -104,5 +104,3 @@ if __name__ == "__main__":
   else:
     e = Fade1(Strip2D(7, 21))
   e.run()
-
-

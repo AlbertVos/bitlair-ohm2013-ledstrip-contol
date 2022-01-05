@@ -4,11 +4,11 @@ import time
 import sys
 
 sys.path.append('../lib')
-from strip import *
+from strip import Effect, Strip2D
 
 # From: http://www.mobile1up.com/lemmings/blog/index-old.php
 #   http://www.mobile1up.com/lemmings/blog/pictures/lemmings-walker-sprites.png
-# 
+#
 # http://crisp.tweakblogs.net/blog/3881/dhtml-lemmings-primer.html
 # http://tweakers.net/redactieblogs/70169/html-5-de-toekomst-van-gaming-op-het-web.html
 
@@ -115,20 +115,19 @@ class Lemmings1(Effect):
     self.strip2D.send()
 
   def run(self, runtime = None):
-    if ( runtime == None ):
-         if ( hasattr( sys, "maxint" ) ): # Python 2
-            runtime = sys.maxint
-         elif ( hasattr( sys, "maxsize" ) ): # Python 3
-            runtime = sys.maxsize
+    if runtime is None:
+      if hasattr( sys, "maxint" ): # Python 2
+        runtime = sys.maxint
+      elif hasattr( sys, "maxsize" ): # Python 3
+        runtime = sys.maxsize
     start = 10
     end = 77
     count = start - self.strip2D.lenx
 
     now = time.time()
     while (not self.quit) and ((time.time() - now) < runtime):
-      for i in range(len(self.sprites)):
+      for i, sprite in enumerate(self.sprites):
         self.strip2D.strip.clear()
-        sprite = self.sprites[i]
         h = len(sprite)
         for y in range(h):
           line = sprite[y]
@@ -140,7 +139,7 @@ class Lemmings1(Effect):
               yy = h - 1 - y
               self.strip2D.strip.set( \
                 xx + yy * self.strip2D.lenx, self.palette[c - 1])
-        if True:
+        if True: # pylint: disable=using-constant-test
           count += self.step[i]
           if count > 70:
             count = start - self.strip2D.lenx
@@ -160,5 +159,3 @@ class Lemmings1(Effect):
 if __name__ == "__main__":
   e = Lemmings1(Strip2D(7, 21))
   e.run()
-
-
