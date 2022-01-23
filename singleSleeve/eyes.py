@@ -188,7 +188,7 @@ class Eyes(Effect):
       for s in range( location, location + self.distance + 1 ):
         try:
           freespots.remove( s )
-        except ValueError():
+        except ValueError:
           pass
 
       eyes.append( Eye( self.strip2D, location, on, self.distance ) )

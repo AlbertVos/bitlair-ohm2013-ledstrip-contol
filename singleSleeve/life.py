@@ -12,13 +12,16 @@ from strip import Effect, Strip2D
 # Conrad's game of life
 
 class Life(Effect):
+  plane = None
 
   def __init__(self, strip2D):
     super(Life, self).__init__(strip2D)
     self.strip2D.strip.clear()
     self.strip2D.send()
     self.reset()
-    self.plane = None
+    y = self.strip2D.leny + 1
+    x = self.strip2D.lenx + 1
+    self.plane = [x[:] for x in [[0] * y] * x ]
 
   def step(self, count):
     self.strip2D.strip.clear([0, 0, 0])
@@ -26,7 +29,7 @@ class Life(Effect):
     #  self.reset()
     if (count % 20) == 0:
       for _i in range(int(20 / (math.log(self.getCount() + 1) + 1))):
-        self.plane[random.randint(0, 6)][random.randint(0, 20)] = 1
+        self.plane[random.randint(0, self.strip2D.lenx - 1)][random.randint(0, self.strip2D.leny - 1)] = 1
     else:
       self.updatePlane()
     self.draw(count)
@@ -36,7 +39,7 @@ class Life(Effect):
   def reset(self):
     self.plane = [[0 for y in range(21)] for x in range(7)]
     for _i in range(30):
-      self.plane[random.randint(0, 6)][random.randint(0, 20)] = 1
+      self.plane[random.randint(0, self.strip2D.lenx - 1)][random.randint(0, self.strip2D.leny - 1)] = 1
 
   def updatePlane(self):
     p = copy.deepcopy(self.plane)
