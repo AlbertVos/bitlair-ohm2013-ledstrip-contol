@@ -299,6 +299,18 @@ class Strip2D:
   """
   The Strip2D class defines operations on a 2-dimensional led banner and
   maps it to a Strip.
+  This can be initialized in 2 ways.
+
+  1. for a cylinder, 7 pixels circumference,
+     21 pixels high spiral from top to bottom clockwise (from top):
+  s = Strip2D(7, 21)
+
+  2. for a cone, with 6 pixels circumference,
+     arbitrary heights (max. 21) zig-zag from bottom to top clockwise (from top):
+  s = Strip2D( 21, 18, 17, 15, 15, 17 )
+
+  Note that the zig-zag style cannot use any of the `rot*` methods
+  since moving from one height to a different will cause loss of pixel information
   """
   lenx = 0
   leny = 0
@@ -309,8 +321,25 @@ class Strip2D:
   def __init__(self, lenx, leny, *args, addr=None):
     """Constructor, defining a led banner of width lenx and height leny."""
 
-    self.lenx = lenx
-    self.leny = leny
+    if len( args ) > 0:
+      # Vertical zig-zag string of lengths
+      self.lengths = []
+      self.lengths.append( lenx )
+      self.lengths.append( leny )
+      if lenx > leny:
+        self.leny = lenx
+      else:
+        self.leny = leny
+
+      for arg in args:
+        self.lengths.append( arg )
+        if arg > self.leny:
+          self.leny = arg
+      self.lenx = len( self.lengths )
+    else:
+      # Regular (spiral) layout
+      self.lenx = lenx
+      self.leny = leny
     #self.strip = Strip(lenx * leny, addr)
     self.strip = Strip(150, addr)
     #self.f = [.20 * math.sin(math.pi * i / 26) for i in range(1, 12)]
@@ -325,11 +354,42 @@ class Strip2D:
 
   def set(self, x, y, color):
     """Set the color of the led at (x, y)."""
-    self.strip.set(x + y * self.lenx, color)
+    if self.lengths:
+      # Vertical zig-zag string of lengths
+      if x >= len(self.lengths):
+        return
+      if y > self.lengths[x]:
+        return
+
+      pos = 149
+      for hor in range(x):
+        pos -= self.lengths[hor]
+      if x % 2 == 0:
+        pos -= y
+      else:
+        pos += y - self.lengths[x] + 1
+
+    else:
+      # Regular (spiral) layout
+      pos = x + y * self.lenx
+
+    self.strip.set(pos, color)
 
   def get(self, x, y):
     """Get the color of the led at (x, y)."""
-    return self.strip.get(x + y * self.lenx)
+    if self.lengths:
+      # Vertical zig-zag string of lengths
+      pos = 0
+      if x % 2 == 0:
+        pos += self.lengths[x]
+        pos -= y - 1
+      else:
+        pos += y
+      pos += 51
+    else:
+      # Regular (spiral) layout
+      pos = x + y * self.lenx
+    return self.strip.get(pos)
 
   def rotr(self):
     """
