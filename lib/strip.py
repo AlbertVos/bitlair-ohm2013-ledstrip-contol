@@ -20,34 +20,39 @@ import sys
 import select
 import os
 
-# Signal handler to kill the application
-# Usage: signal.signal(signal.SIGINT, signal_handler)
 
 def signal_handler(_signal, _frame):
+  """
+  Signal handler to kill the application
+  Usage: signal.signal(signal.SIGINT, signal_handler)
+  """
   #print('Bye ...')
   strip.stop()
   os.kill(os.getpid(), signal.SIGKILL)
   sys.exit(0)
 
-# Convert string to array of tupples
-# Parameter s can be:
-#   abcdef
-#   'abcdef'
-#   "abcdef"
-#   ("abcdef", 123)
-#   [("abcdef", 123)]
-
-def toTuppleArray(s):
-  if ((s[0] == '"') or (s[0] == "'")):
-    s = "[(" + s + ")]"
-  elif not ((s[0] == '[') or (s[0] == '(')):
-    s = "[('" + s + "',)]"
-  elif s[0] == '(':
-    s = "[" + s + "]"
+def toTuppleArray(string):
+  """
+  Convert string to array of tupples
+  Parameter s can be:
+    abcdef
+    'abcdef'
+    "abcdef"
+    ("abcdef", 123)
+    [("abcdef", 123)]
+  """
+  if ((string[0] == '"') or (string[0] == "'")):
+    # String
+    string = "[(" + string + ")]"
+  elif not ((string[0] == '[') or (string[0] == '(')):
+    # not an Array or Tuple
+    string = "[('" + string + "',)]"
+  elif string[0] == '(':
+    # Tuple
+    string = "[" + string + "]"
   else:
     pass
-  #r = eval(s)
-  return eval(s) # pylint: disable=eval-used
+  return eval(string) # pylint: disable=eval-used
 
 
 def getAddr(addr = None):
@@ -72,12 +77,11 @@ def getAddr(addr = None):
   return addr
 
 
-#
-# The Artnet class provides operation for sending and receiving data
-# using the Artnet protocol.
-#
-
 class Artnet:
+  """
+  The Artnet class provides operation for sending and receiving data
+  using the Artnet protocol.
+  """
   localHost = "0.0.0.0"
   localPort = 6454
   sock = 0
@@ -123,21 +127,27 @@ class Artnet:
     self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
     self.sock.bind((self.localHost, self.localPort))
 
-  # Shutdown the connection
   def close(self):
+    """
+    Shutdown the connection
+    """
     self.clear()
     self.sock.close()
 
-  # Clear the entire strip
   def clear(self):
+    """
+    Clear the entire strip
+    """
     data = self.dataHeader
     for _i in range(self.length):
       data += b"\x00\x00\x00"
     for _i, address in enumerate(self.addr):
       self.sock.sendto( data, address)
 
-  # Send the data of a strip
   def send(self, current_strip):
+    """
+    Send the data of a strip
+    """
     data = bytearray(3*current_strip.length)
     for i in reversed(range(current_strip.length)):
       c = current_strip.get(current_strip.length - i)
@@ -147,8 +157,10 @@ class Artnet:
     for _i, address in enumerate(self.addr):
       self.sock.sendto( self.dataHeader + data, address)
 
-  # Run poll for 5 seconds.
   def poll(self):
+    """
+    Run poll for 5 seconds.
+    """
     devices = []
     self.sock.setblocking(0)
     for _i, address in enumerate(self.addr):
@@ -168,17 +180,19 @@ class Artnet:
     self.sock.setblocking(1)
     return devices
 
-#
-# The Strip class defines operations for a 1-dimensional string of leds.
-#
 strip = None
 
 class Strip:
+  """
+  The Strip class defines operations for a 1-dimensional string of leds.
+  """
   length = 0
   rgb = []
 
-  # Constructor, creating a strip of length leds.
   def __init__(self, length, addr = None):
+    """
+    Constructor, creating a strip of length leds.
+    """
     self.length = length
     self.clear()
     self.artnet = Artnet(addr)
@@ -188,27 +202,35 @@ class Strip:
     global strip
     strip = self
 
-  # Stop this strip
   def stop(self):
+    """
+    Stop this strip
+    """
     if "globalStop" in dir(strip):
       self.globalStop(self) # pylint: disable=no-member
     self.artnet.close()
 
-  # Send the data of myself to the strip
   def send(self):
+    """
+    Send the data of myself to the strip
+    """
     self.artnet.send(self)
 
-  # Clear the entire strip with one color (default: black).
-  # Color is array: [r, g, b].
   def clear(self, color = None):
+    """
+    Clear the entire strip with one color (default: black).
+    Color is array: [r, g, b].
+    """
     if color and len(color):
       [r, g, b] = color
     else:
       [r, g, b] = [0, 0, 0]
     self.rgb = [[r, g, b] for x in range(self.length)]
 
-  # Set led at index to color.
   def set(self, index, color, alpha = -1):
+    """
+    Set led at index to color.
+    """
     if ((index >= 0) and (index < self.length)):
       [r, g, b] = color
       if alpha >= 0:
@@ -226,29 +248,37 @@ class Strip:
             b = 255
       self.rgb[self.length - 1 - index] = [r, g, b]
 
-  # Get color of led at index.
   def get(self, index):
+    """
+    Get color of led at index.
+    """
     if ((index >= 0) and (index < self.length)):
       [r, g, b] = self.rgb[self.length - 1 - index]
       return [r, g, b]
     else:
       return [0, 0, 0]
 
-  # Set a range of leds starting at index to the specified colors.
   def setm(self, index, colors):
+    """
+    Set a range of leds starting at index to the specified colors.
+    """
     length = len(colors)
     for i in range(length):
       self.set(index + i, colors[i])
 
-  # Get the colors of a range of leds starting at index up to given length.
   def getm(self, index, length):
+    """
+    Get the colors of a range of leds starting at index up to given length.
+    """
     a = []
     for i in range(length):
       a.append(self.get(index + i))
     return a
 
-  # Fade that strip by a factor a
   def fade(self, a):
+    """
+    Fade that strip by a factor a
+    """
     for i in range(self.length):
       [r, g, b] = self.rgb[i]
       r = int(float(r) * float(a))
@@ -256,87 +286,164 @@ class Strip:
       b = int(float(b) * float(a))
       self.rgb[i] = [r, g, b]
 
-  # Print strip contents to stdout.
   def print_(self):
+    """
+    Print strip contents to stdout.
+    """
     for i in range(self.length):
       print("strip ", i, self.rgb[i][0], self.rgb[i][1], self.rgb[i][2])
 
 
-#
-# The Strip2D class defines operations on a 2-dimensional led banner and
-# maps it to a Strip.
-#
 
 class Strip2D:
+  """
+  The Strip2D class defines operations on a 2-dimensional led banner and
+  maps it to a Strip.
+  This can be initialized in 2 ways.
+
+  1. for a cylinder, 7 pixels circumference,
+     21 pixels high spiral from top to bottom clockwise (from top):
+  s = Strip2D(7, 21)
+
+  2. for a cone, with 6 pixels circumference,
+     arbitrary heights (max. 21) zig-zag from bottom to top clockwise (from top):
+  s = Strip2D( 21, 18, 17, 15, 15, 17 )
+
+  Note that the zig-zag style cannot use any of the `rot*` methods
+  since moving from one height to a different will cause loss of pixel information
+  """
   lenx = 0
   leny = 0
+  lengths = None
   fadeCount = 0
   strip = None
 
-  # Constructor, defining a led banner of width lenx and height leny.
-  def __init__(self, lenx, leny, addr = None):
-    self.lenx = lenx
-    self.leny = leny
+  def __init__(self, lenx, leny, *args, addr=None):
+    """Constructor, defining a led banner of width lenx and height leny."""
+
+    if len( args ) > 0:
+      # Vertical zig-zag string of lengths
+      self.lengths = []
+      self.lengths.append( lenx )
+      self.lengths.append( leny )
+      if lenx > leny:
+        self.leny = lenx
+      else:
+        self.leny = leny
+
+      for arg in args:
+        self.lengths.append( arg )
+        if arg > self.leny:
+          self.leny = arg
+      self.lenx = len( self.lengths )
+    else:
+      # Regular (spiral) layout
+      self.lenx = lenx
+      self.leny = leny
     #self.strip = Strip(lenx * leny, addr)
     self.strip = Strip(150, addr)
     #self.f = [.20 * math.sin(math.pi * i / 26) for i in range(1, 12)]
     self.f = [0.02, 0.03, 0.05, 0.09, 0.10, 0.11, 0.12, 0.13, 0.17, 0.19, 0.20]
 
-  # Send data to the strip
   def send(self):
-    for i in range(self.lenx * self.leny, self.strip.length):
-      self.strip.set(i, [0, 0, 0])
+    """Send data to the strip"""
+    if not self.lengths:
+      for i in range(self.lenx * self.leny, self.strip.length):
+        self.strip.set(i, [0, 0, 0])
     self.strip.send()
 
-  # Set the color of the led at (x, y).
   def set(self, x, y, color):
-    self.strip.set(x + y * self.lenx, color)
+    """Set the color of the led at (x, y)."""
+    if self.lengths:
+      # Vertical zig-zag string of lengths
+      if x >= len(self.lengths):
+        return
+      if y > self.lengths[x]:
+        return
 
-  # Get the color of the led at (x, y).
+      pos = 149
+      for hor in range(x):
+        pos -= self.lengths[hor]
+      if x % 2 == 0:
+        pos -= y
+      else:
+        pos += y - self.lengths[x] + 1
+
+    else:
+      # Regular (spiral) layout
+      pos = x + y * self.lenx
+
+    self.strip.set(pos, color)
+
   def get(self, x, y):
-    return self.strip.get(x + y * self.lenx)
+    """Get the color of the led at (x, y)."""
+    if self.lengths:
+      # Vertical zig-zag string of lengths
+      pos = 0
+      if x % 2 == 0:
+        pos += self.lengths[x]
+        pos -= y - 1
+      else:
+        pos += y
+      pos += 51
+    else:
+      # Regular (spiral) layout
+      pos = x + y * self.lenx
+    return self.strip.get(pos)
 
-  # Rotate the banner contents 1 led to the right.
   def rotr(self):
+    """
+    Rotate the banner contents 1 led to the right.
+    """
     for y in range(self.leny):
       c = self.get(self.lenx - 1, y)
       for x in reversed(range(self.lenx - 1)):
         self.set(x + 1, y, self.get(x, y))
       self.set(0, y, c)
 
-  # Rotate the banner contents 1 led to the left.
   def rotl(self):
+    """
+    Rotate the banner contents 1 led to the left.
+    """
     for y in range(self.leny):
       c = self.get(0, y)
       for x in range(self.lenx - 1):
         self.set(x, y, self.get(x + 1, y))
       self.set(self.lenx - 1, y, c)
 
-  # Rotate the banner contents 1 led up.
   def rotu(self):
+    """
+    Rotate the banner contents 1 led up.
+    """
     c = self.strip.getm((self.leny - 1) * self.lenx, self.lenx)
     for y in reversed(range(self.leny - 1)):
       self.strip.setm((y + 1) * self.lenx, \
         self.strip.getm(y * self.lenx, self.lenx))
     self.strip.setm(0, c)
 
-  # Rotate the banner contents 1 led down.
   def rotd(self):
+    """
+    Rotate the banner contents 1 led down.
+    """
     c = self.strip.getm(0, self.lenx)
     for y in range(self.leny - 1):
       self.strip.setm(y * self.lenx, \
         self.strip.getm((y + 1) * self.lenx, self.lenx))
     self.strip.setm((self.leny - 1) * self.lenx, c)
 
-  # Set pattern for every y increment with step.
   def pattern(self, data, step):
+    """
+    Set pattern for every y increment with step.
+    """
     #length = len(data)
     for y in range(self.leny):
       for x in range(self.lenx):
         self.set(x, y, data[(x + y * step) % self.lenx])
 
-  # Fade that strip by a factor a
   def fade(self, a):
+    """
+    Fade that strip by a factor a
+    """
     for y in range(self.leny):
       for x in range(self.lenx):
         p = self.get(x, y)
@@ -346,25 +453,23 @@ class Strip2D:
         self.set(x, y, p)
 
   def coneFade(self, yy):
-    for y in range(self.leny):
-      if abs(y - yy) >= len(self.f):
+    for y_position in range(self.leny):
+      if abs(y_position - yy) >= len(self.f):
         f = self.f[len(self.f) - 1]
       else:
-        f = self.f[abs(y - yy)]
-      for x in range(self.lenx):
-        c = self.get(x, y)
+        f = self.f[abs(y_position - yy)]
+      for x_position in range(self.lenx):
+        c = self.get(x_position, y_position)
         c = [int(c[0] * f), int(c[1] * f), int(c[2] * f)]
 
-        self.set(x, y, c)
-        self.set(x, y, c)
+        self.set(x_position, y_position, c)
+        self.set(x_position, y_position, c)
 
-
-
-#
-# The Canvas class provides function for drawing on a Strip2D.
-#
 
 class Canvas:
+  """
+  The Canvas class provides function for drawing on a Strip2D.
+  """
   lenx = 0
   leny = 0
   strip2D = 0
@@ -374,12 +479,14 @@ class Canvas:
     self.leny = leny
     self.strip2D = Strip2D(lenx, leny)
 
-  # Draw a circle
   def circle(self, cx, cy, radius, color):
+    """
+    Draw a circle
+    """
     x = 0
     y = radius
     p = (5 - radius * 4) / 4
-    self.circlePoints(cx, cy, x, y, color)
+    self.circle_points(cx, cy, x, y, color)
     while x < y:
       x += 1
       if p < 0:
@@ -387,10 +494,12 @@ class Canvas:
       else:
         y -= 1
         p += 2 * (x - y) + 1
-      self.circlePoints(cx, cy, x, y, color)
+      self.circle_points(cx, cy, x, y, color)
 
-  # used by circle; do not use
-  def circlePoints(self, cx, cy, x, y, c):
+  def circle_points(self, cx, cy, x, y, c):
+    """
+    used by circle; do not use
+    """
     if x == 0:
       self.strip2D.set(cx, cy + y, c)
       self.strip2D.set(cx, cy - y, c)
