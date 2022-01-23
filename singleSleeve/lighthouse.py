@@ -1,47 +1,44 @@
 #!/usr/bin/env python3
 
-import time;
-import random;
+import time
 
 import sys
 sys.path.append('../lib')
-from strip import *;
+from strip import Effect, Strip2D
 
 
 class Lighthouse(Effect):
 
   def __init__(self, strip2D):
-    super(Lighthouse, self).__init__(strip2D);
-    self.strip2D.strip.clear();
+    super(Lighthouse, self).__init__(strip2D)
+    self.strip2D.strip.clear()
 
   def run(self, runtime = None):
-    if ( runtime == None ):
-         if ( hasattr( sys, "maxint" ) ): # Python 2
-            runtime = sys.maxint
-         elif ( hasattr( sys, "maxsize" ) ): # Python 3
-            runtime = sys.maxsize
-      
-    self.strip2D.strip.clear();
+    if runtime is None:
+      if hasattr( sys, "maxint" ): # Python 2
+        runtime = sys.maxint
+      elif hasattr( sys, "maxsize" ): # Python 3
+        runtime = sys.maxsize
 
-    x = 5;
+    self.strip2D.strip.clear()
+
+    x = 5
     for y in range(self.strip2D.leny):
       if y % 7 == 0:
-        x -= 1;
-      self.strip2D.set(x - 1, y, [40, 40, 40]);
-      self.strip2D.set(x, y, [255, 255, 255]);
-    self.strip2D.send();
+        x -= 1
+      self.strip2D.set(x - 1, y, [40, 40, 40])
+      self.strip2D.set(x, y, [255, 255, 255])
+    self.strip2D.send()
 
-    now = time.time();
+    now = time.time()
     while (not self.quit) and ((time.time() - now) < runtime):
-      time.sleep(0.2);
-      self.strip2D.rotr();
-      self.strip2D.send();
+      time.sleep(0.2)
+      self.strip2D.rotr()
+      self.strip2D.send()
 
-    self.quit = False;
+    self.quit = False
 
 
 if __name__ == "__main__":
-  e = Lighthouse(Strip2D(7, 21));
-  e.run();
-
-
+  e = Lighthouse(Strip2D(7, 21))
+  e.run()

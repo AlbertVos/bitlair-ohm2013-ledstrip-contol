@@ -1,55 +1,52 @@
 #!/usr/bin/env python3
 
-import time;
-import random;
+import time
 
 import sys
 sys.path.append('../lib')
-from strip import *;
+from strip import Effect, Strip2D
 
 
 class Bump1(Effect):
 
   def __init__(self, strip2D):
-    super(Bump1, self).__init__(strip2D);
-    self.strip2D.strip.clear();
+    super(Bump1, self).__init__(strip2D)
+    self.strip2D.strip.clear()
 
   def run(self, runtime = None):
-    if ( runtime == None ):
-         if ( hasattr( sys, "maxint" ) ): # Python 2
-            runtime = sys.maxint
-         elif ( hasattr( sys, "maxsize" ) ): # Python 3
-            runtime = sys.maxsize
+    if runtime is None:
+      if hasattr( sys, "maxint" ): # Python 2
+        runtime = sys.maxint
+      elif hasattr( sys, "maxsize" ): # Python 3
+        runtime = sys.maxsize
 
-    self.strip2D.strip.clear([255, 255, 255]);
+    self.strip2D.strip.clear([255, 255, 255])
 
     for x in range(self.strip2D.lenx):
-      self.strip2D.set(x, 0, [255, 0, 0]);
-      self.strip2D.set(x, 1, [255, 0, 0]);
-      self.strip2D.set(x, 2, [255, 0, 0]);
+      self.strip2D.set(x, 0, [255, 0, 0])
+      self.strip2D.set(x, 1, [255, 0, 0])
+      self.strip2D.set(x, 2, [255, 0, 0])
     for y in range(self.strip2D.leny):
-      self.strip2D.set(0, y, [255, 0, 0]);
-    self.strip2D.send();
+      self.strip2D.set(0, y, [255, 0, 0])
+    self.strip2D.send()
 
-    now = time.time();
+    now = time.time()
     while (not self.quit) and ((time.time() - now) < runtime):
-      
-      for i in range(18):
-        time.sleep(0.1);
-        self.strip2D.rotu();
-        self.strip2D.rotr();
-        self.strip2D.send();
-      for i in range(18):
-        time.sleep(0.1);
-        self.strip2D.rotd();
-        self.strip2D.rotl();
-        self.strip2D.send();
 
-    self.quit = False;
+      for _i in range(18):
+        time.sleep(0.1)
+        self.strip2D.rotu()
+        self.strip2D.rotr()
+        self.strip2D.send()
+      for _i in range(18):
+        time.sleep(0.1)
+        self.strip2D.rotd()
+        self.strip2D.rotl()
+        self.strip2D.send()
+
+    self.quit = False
 
 
 if __name__ == "__main__":
-  e = Bump1(Strip2D(7, 21));
-  e.run();
-
-
+  e = Bump1(Strip2D(7, 21))
+  e.run()

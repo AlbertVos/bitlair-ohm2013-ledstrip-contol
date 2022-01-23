@@ -4,7 +4,7 @@ import time
 
 import sys
 sys.path.append('../lib')
-from strip import *;
+from strip import Effect, Strip2D
 
 """
 Rainbow colors:
@@ -21,15 +21,15 @@ VIOLET   134,0,255
 class Rainbow(Effect):
 
   def __init__(self, strip2D):
-    super(Rainbow, self).__init__(strip2D);
-    self.strip2D.strip.clear();
-  
+    super(Rainbow, self).__init__(strip2D)
+    self.strip2D.strip.clear()
+
   def run(self, runtime = None):
-    if ( runtime == None ):
-         if ( hasattr( sys, "maxint" ) ): # Python 2
-            runtime = sys.maxint
-         elif ( hasattr( sys, "maxsize" ) ): # Python 3
-            runtime = sys.maxsize
+    if runtime is None:
+      if hasattr( sys, "maxint" ): # Python 2
+        runtime = sys.maxint
+      elif hasattr( sys, "maxsize" ): # Python 3
+        runtime = sys.maxsize
     """
     self.strip2D.pattern([ \
       [255, 0, 0],   # red
@@ -39,7 +39,7 @@ class Rainbow(Effect):
       [0, 255, 255], # cyan
       [0, 0, 255],   # blue
       [255, 0, 255], # magenta
-    ],  0);
+    ],  0)
     """
     self.strip2D.pattern([ \
       [255, 0, 0],
@@ -49,15 +49,15 @@ class Rainbow(Effect):
       [0, 0, 255],
       [128, 0, 255], #[72, 0, 130],
       [255, 0, 255], #[134, 0, 255],
-    ],  0);
-    self.strip2D.send();
-    now = time.time();
+    ],  0)
+    self.strip2D.send()
+    now = time.time()
     while (not self.quit) and ((time.time() - now) < runtime):
-      time.sleep(0.1);
-      self.strip2D.rotr();
-      self.strip2D.send();
+      time.sleep(0.1)
+      self.strip2D.rotr()
+      self.strip2D.send()
 
-    self.quit = False;
+    self.quit = False
 
 
 """
@@ -67,7 +67,5 @@ class Rainbow(Effect):
 """
 
 if __name__ == "__main__":
-  e = Rainbow(Strip2D(7, 21));
-  e.run();
-
-
+  e = Rainbow(Strip2D(7, 21))
+  e.run()

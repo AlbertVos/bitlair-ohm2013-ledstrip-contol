@@ -1,38 +1,39 @@
 #!/usr/bin/env python3
 
-import time;
-import threading;
+import time
+import threading
+import random
 
 import sys
 sys.path.append('lib')
-from strip import *;
+from strip import Strip2D, getAddr
 
 sys.path.append('singleSleeve')
-from bump import *;
-from cmorph import *;
-from fade import *;
-from fire import *;
-from fire2 import *;
-from hourglass import *;
-from lemmings import *;
-from plasma import *;
-from police import *;
-from rainbow import *;
-from stars import *;
-from night import *;
-from matrix import *;
-from power import *;
-from weird1 import *;
-from weird2 import *;
-from weird3 import *;
-from flash import *;
-from lighthouse import *;
+from bump import Bump1
+from cmorph import CMorph
+from fade import Fade1, Fade2
+from fire import Fire
+from fire2 import Fire2
+from hourglass import Hourglass
+from lemmings import Lemmings1
+from plasma import Plasma
+from police import Police1, Police2, Police3
+from rainbow import Rainbow
+from stars import Stars1, Stars2
+from night import Night
+from matrix import Matrix
+from power import Power
+from weird1 import Weird1
+from weird2 import Weird2
+from weird3 import Weird3
+from flash import Flash
+from lighthouse import Lighthouse
 
 
-lenx = 7;
-leny = 21;
+lenx = 7
+leny = 21
 
-strip2D = Strip2D(lenx, leny);
+strip2D = Strip2D(lenx, leny)
 effects = [
   [Police1(strip2D), 3],
   [Rainbow(strip2D), 10],
@@ -57,58 +58,56 @@ effects = [
   [Weird3(strip2D), 20],
   [Lighthouse(strip2D), 10],
   [Flash(strip2D), 10],
-];
+]
 
 
 def globalStop(self):
   print( "globalStop" )
-  self.artnet.clear();
-  self.send();
+  self.artnet.clear()
+  self.send()
 
 strip2D.strip.globalStop = globalStop
 
-#count = 0;
-count = random.randint(0, len(effects) - 1);    
-dowait = False;
+#count = 0
+count = random.randint(0, len(effects) - 1)
+dowait = False
 
 
 def manage():
   global count
-  global dowait;
+  global dowait
   while True:
-    time.sleep(effects[count][1]);
-    dowait = True;
-    cnt = count;
+    time.sleep(effects[count][1])
+    dowait = True
+    cnt = count
     # Run fixed sequence of effects
-    #count = (count + 1) % len(effects);
+    #count = (count + 1) % len(effects)
     # Run random sequence of effects
-    count = random.randint(0, len(effects) - 1);    
-    effects[cnt][0].quit = True;
-    while dowait == True:
-      time.sleep(0.1);
-    dowait = True;
+    count = random.randint(0, len(effects) - 1)
+    effects[cnt][0].quit = True
+    while dowait:
+      time.sleep(0.1)
+    dowait = True
 
 
-thread = threading.Thread(target = manage, args = []);
-thread.daemon = True;
-thread.start();
+thread = threading.Thread(target = manage, args = [])
+thread.daemon = True
+thread.start()
 
-addr = getAddr();
-strip2D.strip.artnet.addr = addr;
+addr = getAddr()
+strip2D.strip.artnet.addr = addr
 
 while True:
-  # Print effect name 
+  # Print effect name
   #print( "---", type(effects[count][0]).__name__, "---" )
 
-  #effects[count][0].run(effects[count][1] * 10);
-  effects[count][0].run(random.randint(6, 30) * 10);
+  #effects[count][0].run(effects[count][1] * 10)
+  effects[count][0].run(random.randint(6, 30) * 10)
   for i in range(10):
-    strip2D.strip.fade(.6);
-    strip2D.send();
-    time.sleep(0.05);
-  #strip2D.strip.artnet.clear();
-  dowait = False;
-  while dowait == False:
-    time.sleep(0.1);
-
-
+    strip2D.strip.fade(.6)
+    strip2D.send()
+    time.sleep(0.05)
+  #strip2D.strip.artnet.clear()
+  dowait = False
+  while not dowait:
+    time.sleep(0.1)

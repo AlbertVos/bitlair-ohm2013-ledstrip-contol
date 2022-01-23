@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 import random
-import math
 import time
 
 import sys
 sys.path.append('../lib')
-from strip import *;
+from strip import Effect, Strip2D
 
 
 class Fire(Effect):
@@ -16,10 +15,10 @@ class Fire(Effect):
   pcount = 300
 
   def __init__(self, strip2D):
-    super(Fire, self).__init__(strip2D);
-    
-    self.strip2D.strip.clear([0, 0, 0]);
-    self.strip2D.send();
+    super(Fire, self).__init__(strip2D)
+
+    self.strip2D.strip.clear([0, 0, 0])
+    self.strip2D.send()
 
     for i in range(150):
       self.rdata[i] = 0
@@ -27,29 +26,29 @@ class Fire(Effect):
       self.bdata[i] = 0
 
   def run(self, runtime = None):
-    if ( runtime == None ):
-         if ( hasattr( sys, "maxint" ) ): # Python 2
-            runtime = sys.maxint
-         elif ( hasattr( sys, "maxsize" ) ): # Python 3
-            runtime = sys.maxsize
-      
+    if runtime is None:
+      if hasattr( sys, "maxint" ): # Python 2
+        runtime = sys.maxint
+      elif hasattr( sys, "maxsize" ): # Python 3
+        runtime = sys.maxsize
+
     particles = [Particle(self, random.randint(0, self.strip2D.lenx - 1), \
       random.randint(0, self.strip2D.leny)) for each in range(self.pcount)]
 
-    now = time.time();
+    now = time.time()
     while (not self.quit) and ((time.time() - now) < runtime):
       for i in range(self.pcount):
         particles[i].updateparticle()
 
       for i in range(150):
         self.strip2D.set((149 - i) % 7, (149 - i) // 7, \
-          [self.rdata[i], self.gdata[i], self.bdata[i]]);
+          [self.rdata[i], self.gdata[i], self.bdata[i]])
 
-      self.strip2D.send();
+      self.strip2D.send()
       self.cleanarray()
-      time.sleep(0.02)    
+      time.sleep(0.02)
 
-    self.quit = False;
+    self.quit = False
 
   def cleanarray(self):
     for i in range(150):
@@ -62,7 +61,7 @@ class Particle:
 
   def __init__(self, fire, x, y):
     self.rgb = (255, 255, random.randint(0, 255))
-    self.fire = fire;
+    self.fire = fire
     self.y = y
     self.x = x
     self.rnderp = id(self) % 9
@@ -88,7 +87,7 @@ class Particle:
     self.intoarray(intx, inty, self.rgb)
     if self.y < self.life or self.y < 0.5:
       self.__init__(self.fire, self.x, self.fire.strip2D.leny)
-              
+
   def intoarray(self, x, y, rgb):
     self.fire.rdata[y * 7 + x] = rgb[0]
     self.fire.gdata[y * 7 + x] = rgb[1]
@@ -102,7 +101,5 @@ class Particle:
 """
 
 if __name__ == "__main__":
-  e = Fire(Strip2D(7, 21));
-  e.run();
-
-
+  e = Fire(Strip2D(7, 21))
+  e.run()
