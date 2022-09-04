@@ -6,14 +6,22 @@ import sys
 sys.path.append('../lib')
 from strip import Effect, Strip2D
 
+defaultColors = [
+  [0,0,0],    # idle (color before 5 minute mark)
+  [1,1,1],    # active (when the 5 minute progress starts)
+  [0,255,0],  # 5 minutes progress
+  [255,255,0],# 1 minute progress
+  [255,0,0],  # 10 seconds progress
+  [255,0,1],  # timeout (color after 0 second mark)
+]
 class Countdown(Effect):
   endtime = None
   direction = None
 
-  def __init__(self, strip2D, colors, epoch=None, direction="up"):
+  def __init__(self, strip2D, colors=None, epoch=None, direction="up"):
     super(Countdown, self).__init__(strip2D)
     self.strip2D.strip.clear()
-    self.colors = colors
+    self.colors = colors or defaultColors
     self.endtime = epoch or (time.time() + 300)
     self.direction = direction
 
@@ -85,30 +93,21 @@ class Countdown(Effect):
 ./countdown.py [epoch] [up/down] 'addr=[("192.168.1.255", 6454), ("localhost", 7000)]'
 """
 if __name__ == "__main__":
-  colors = [
-    [0,0,0],    # idle (color before 5 minute mark)
-    [1,1,1],    # active (when the 5 minute progress starts)
-    [0,255,0],  # 5 minutes progress
-    [255,255,0],# 1 minute progress
-    [255,0,0],  # 10 seconds progress
-    [255,0,1],  # timeout (color after 0 second mark)
-  ]
-
-  direction = "up"
-  epoch = None
+  argDirection = None
+  argEpoch = None
 
   if len(sys.argv) > 2:
     if sys.argv[1] == "down" or sys.argv[1] == "up":
-      direction = sys.argv[1]
+      argDirection = sys.argv[1]
     else:
-      epoch = int( sys.argv[1] )
+      argEpoch = int( sys.argv[1] )
   if len(sys.argv) > 3:
     if sys.argv[2] == "down" or sys.argv[2] == "up":
-      direction = sys.argv[2]
+      argDirection = sys.argv[2]
     else:
-      epoch = int( sys.argv[2] )
+      argEpoch = int( sys.argv[2] )
 
-  e = Countdown(Strip2D( 7, 21 ), colors, epoch, direction )
+  e = Countdown(Strip2D( 7, 21 ), defaultColors, argEpoch, argDirection )
 
   #e = Countdown(Strip2D( 21, 18, 15, 17, 15, 17 ), colors, 1640991600 ) # New year tz 1
   e.run()

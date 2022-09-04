@@ -13,11 +13,15 @@ import sys
 sys.path.append('../lib')
 from strip import Effect, Strip2D
 
+red = [255,   0,   0]
+white = [64, 64, 64]
+blue = [  0,   0, 255]
+
 class Barber(Effect):
-  def __init__(self, strip2D, colors):
+  def __init__(self, strip2D, colors = None):
     super(Barber, self).__init__(strip2D)
     self.strip2D.strip.clear()
-    self.colors = colors
+    self.colors = colors or [ red, white, white, blue, white, white ]
 
   def run(self, runtime = None):
     if runtime is None:
@@ -53,9 +57,6 @@ class Barber(Effect):
 """
 
 if __name__ == "__main__":
-  red = [255,   0,   0]
-  white = [64, 64, 64]
-  blue = [  0,   0, 255]
 
   if (len(sys.argv) >= 2 and sys.argv[1] == "surgeon"):
     e = Barber(Strip2D(7, 21), [ red, white, white ] )
@@ -63,5 +64,5 @@ if __name__ == "__main__":
     e = Barber(Strip2D(7, 21), [ blue, white, white ] )
   else:
     # Modern (patriot) style
-    e = Barber(Strip2D(7, 21), [ red, white, white, blue, white, white ] )
+    e = Barber(Strip2D(7, 21) )
   e.run()

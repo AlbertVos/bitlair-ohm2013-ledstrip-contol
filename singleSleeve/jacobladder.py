@@ -7,10 +7,10 @@ sys.path.append('../lib')
 from strip import Effect, Strip2D
 
 # Cheesy version of a Jacob's Ladder
-class JacobLadder(Effect):
+class Jacobladder(Effect):
 
   def __init__(self, strip2D):
-    super(JacobLadder, self).__init__(strip2D)
+    super(Jacobladder, self).__init__(strip2D)
     self.strip2D.strip.clear()
 
   def run(self, runtime = None):
@@ -37,5 +37,5 @@ class JacobLadder(Effect):
 
 
 if __name__ == "__main__":
-  e = JacobLadder(Strip2D(7, 21))
+  e = Jacobladder(Strip2D(7, 21))
   e.run()
