@@ -117,6 +117,7 @@ class Police3(Effect):
       elif hasattr( sys, "maxsize" ): # Python 3
         runtime = sys.maxsize
     now = time.time()
+    count2 = 0
     while (not self.quit) and ((time.time() - now) < runtime):
       for _i in range(self.strip2D.lenx):
         c = self.color(count2)

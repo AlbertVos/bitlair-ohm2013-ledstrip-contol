@@ -7,14 +7,19 @@ sys.path.append('../lib')
 from strip import Effect, Strip2D
 
 os.environ["SDL_VIDEODRIVER"] = "dummy"
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 
-pygame.init()
+# This is needed to initialize fonts
+pygame.init() # pylint: disable=no-member
 
 color = [64, 192, 255]
 # You might need to experiment with different fonts since rendering is slightly skewed
 # and the pixels are pretty far apart horizontally
-font = pygame.font.Font("SairaCondensed-ExtraLight.ttf", 10 )
+directory = os.path.dirname(os.path.realpath(__file__))
+fontFile = os.path.join(directory,"SairaCondensed-ExtraLight.ttf")
+
+font = pygame.font.Font(fontFile, 10 )
 
 class Marquee(Effect):
 

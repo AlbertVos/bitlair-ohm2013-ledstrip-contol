@@ -5,7 +5,7 @@ import math
 
 import sys
 sys.path.append('../lib')
-from strip import Strip
+from strip import Strip2D, Effect
 
 period = 1800
 period13 = period / 3
@@ -53,14 +53,39 @@ def rainbow(count):
   b = getColorValue2(count - period23)
   return [r, g, b]
 
-count = 0
-strip = Strip(150)
-strip.clear()
-strip.send()
-while True:
-  strip.clear(rainbow(count))
-  strip.send()
-  count += 1
-  if count >= period:
-    count -= period
-  time.sleep(.1)
+class Rainbowslow(Effect):
+
+  def __init__(self, strip2D):
+    super(Rainbowslow, self).__init__(strip2D)
+    self.strip2D.strip.clear()
+
+  def run(self, runtime = None):
+    if runtime is None:
+      if hasattr( sys, "maxint" ): # Python 2
+        runtime = sys.maxint
+      elif hasattr( sys, "maxsize" ): # Python 3
+        runtime = sys.maxsize
+    count = 0
+    self.strip2D.strip.clear()
+    self.strip2D.send()
+    now = time.time()
+    while (not self.quit) and ((time.time() - now) < runtime):
+      self.strip2D.strip.clear(rainbow(count))
+      self.strip2D.send()
+      count += 1
+      if count >= period:
+        count -= period
+      time.sleep(.1)
+
+    self.quit = False
+
+
+"""
+./rainbowSlow.py addr=192.168.1.255
+./rainbowSlow.py 'addr=[("192.168.1.255", ), ("localhost", 7000)]'
+./rainbowSlow.py 'addr=[("192.168.1.255", 6454), ("localhost", 7000)]'
+"""
+
+if __name__ == "__main__":
+  e = Rainbowslow(Strip2D(7, 21))
+  e.run()

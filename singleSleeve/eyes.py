@@ -38,10 +38,10 @@ def signal_handler(_signal, _frame):
   e.cleanup()
 
 class Eye():
-  def __init__(self, strip2D, position, color = on, distance = 0):
+  def __init__(self, strip2D, position, color = None, distance = 0):
     self.strip2D = strip2D
     self.position = position
-    self.color = color
+    self.color = color or on
     self.distance = distance
     self.evil = 0
     self.thread = None
@@ -123,16 +123,11 @@ class Eye():
 
     if self.thread:
       self.thread.cancel()
+      self.thread.join()
       self.thread = None
 
     self.draw( off )
     self.awake = False
-
-    # Debugging:
-    time.sleep( 0.2 )
-    if( self.thread and self.thread.is_alive() ):
-      self.thread.raise_exception()
-
 
   def blink(self):
     # Since this thread can run longer (blink delay), start the thread first
@@ -164,11 +159,11 @@ class Eye():
 
 class Eyes(Effect):
 
-  def __init__(self, strip2D, pairs, distance):
+  def __init__(self, strip2D, pairs = None, distance = None):
     super(Eyes, self).__init__(strip2D)
     self.strip2D.strip.clear()
-    self.pairs = pairs
-    self.distance = distance
+    self.pairs = pairs or 5
+    self.distance = distance or 2
 
   def run(self, runtime = None):
     if runtime is None:
@@ -199,7 +194,11 @@ class Eyes(Effect):
 
     then = now = time.time()
 
-    signal.signal(signal.SIGINT, signal_handler)
+    # ValueError: signal only works in main thread of the main interpreter
+    try:
+      signal.signal(signal.SIGINT, signal_handler)
+    except ValueError as _e:
+      pass
     #client.on_message = on_mqtt_message
 
     #nextMode = now + random.randint( 2, 30 )
@@ -297,12 +296,12 @@ class Eyes(Effect):
 """
 
 if __name__ == "__main__":
-  pairs = 5
-  distance = 2
-  if len(sys.argv) >= 2:
-    pairs = int( sys.argv[1] )
-  if len(sys.argv) >= 3:
-    distance = int( sys.argv[2] )
+  argPairs = None
+  argDistance = None
+  if len(sys.argv) > 2:
+    argPairs = int( sys.argv[1] )
+  if len(sys.argv) > 3:
+    argDistance = int( sys.argv[2] )
 
-  e = Eyes(Strip2D(10, 10), pairs, distance)
+  e = Eyes(Strip2D(10, 10), argPairs, argDistance)
   e.run()
