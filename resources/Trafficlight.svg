@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="43.965439mm"
+   height="103.23211mm"
+   viewBox="0 0 43.965439 103.23211"
+   version="1.1"
+   id="svg5"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2" />
+  <g
+     id="layer1"
+     transform="translate(-80.212123,-40.500003)">
+    <path
+       id="rect4402"
+       style="opacity:1;stroke:#000000;stroke-width:20;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;paint-order:stroke markers fill"
+       d="M 90.212123,62.482719 H 114.17756 V 121.7494 H 90.212123 Z M 114.17756,121.7494 c 0,6.61787 -5.36485,11.98271 -11.98272,11.98271 -6.617869,0 -11.982713,-5.36484 -11.982717,-11.98271 -2e-6,-6.61787 5.364844,-11.98272 11.982717,-11.98272 6.61787,0 11.98272,5.36485 11.98272,11.98272 z m 0,-59.266681 c 0,6.617873 -5.36485,11.982719 -11.98272,11.982717 -6.617872,0 -11.982717,-5.364845 -11.982717,-11.982717 10e-7,-6.617871 5.364846,-11.982716 11.982717,-11.982716 6.61787,-2e-6 11.98272,5.364843 11.98272,11.982716 z" />
+    <circle
+       style="fill:#ff0000;fill-rule:evenodd;stroke-width:0.264583"
+       id="path1776"
+       cx="102.19484"
+       cy="62.482719"
+       r="11.982717" />
+    <circle
+       style="fill:#ffdb00;fill-opacity:1;fill-rule:evenodd;stroke-width:0.264583"
+       id="circle1893"
+       cx="102.19484"
+       cy="92.116081"
+       r="11.982717" />
+    <circle
+       style="fill:#4bff00;fill-opacity:1;fill-rule:evenodd;stroke-width:0.264583"
+       id="circle3697"
+       cx="102.19484"
+       cy="121.7494"
+       r="11.982717" />
+  </g>
+</svg>

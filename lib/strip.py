@@ -197,7 +197,11 @@ class Strip:
     self.clear()
     self.artnet = Artnet(addr)
 
-    signal.signal(signal.SIGINT, signal_handler)
+    # ValueError: signal only works in main thread of the main interpreter
+    try:
+      signal.signal(signal.SIGINT, signal_handler)
+    except ValueError as _e:
+      pass
 
     global strip
     strip = self
