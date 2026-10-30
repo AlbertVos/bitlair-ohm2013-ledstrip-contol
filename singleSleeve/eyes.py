@@ -31,7 +31,6 @@ lock = threading.RLock()
 e = None
 off = [ 0, 0, 0 ]
 on = [ 64, 64, 30 ]
-on = [ 2, 2, 1 ]
 
 def signal_handler(_signal, _frame):
   print('You pressed Ctrl+C!')
@@ -71,7 +70,7 @@ class Eye():
     self.thread = threading.Timer( nextThink, self.close )
     self.thread.start()
 
-  def wakeup(self, grace = 10.0):
+  def wakeup(self, grace = 3.0):
     # Wakeup within grace period
     nextThink = random.uniform( 0.0, grace )
 
@@ -298,10 +297,11 @@ class Eyes(Effect):
 if __name__ == "__main__":
   argPairs = None
   argDistance = None
-  if len(sys.argv) > 2:
-    argPairs = int( sys.argv[1] )
-  if len(sys.argv) > 3:
-    argDistance = int( sys.argv[2] )
+  nums = [a for a in sys.argv[1:] if a.isdigit()]
+  if len(nums) > 0:
+    argPairs = int( nums[0] )
+  if len(nums) > 1:
+    argDistance = int( nums[1] )
 
-  e = Eyes(Strip2D(10, 10), argPairs, argDistance)
+  e = Eyes(Strip2D(7, 21), argPairs, argDistance)
   e.run()
