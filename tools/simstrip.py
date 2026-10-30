@@ -128,7 +128,7 @@ def start(port, num):
     pos_y = 100
     os.environ['SDL_VIDEO_WINDOW_POS'] = '%i,%i' % (pos_x,pos_y) # pylint: disable=consider-using-f-string
     os.environ['SDL_VIDEO_CENTERED'] = '0'
-    subprocess.Popen(["python3", "simstrip.py", str(port + i), "-"])
+    subprocess.Popen([sys.executable, os.path.abspath(__file__), str(port + i), "-"])
     time.sleep(0.3)
 
 
